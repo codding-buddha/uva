@@ -36,4 +36,3 @@ public class HowManyKnights
 			System.out.println(String.format("%d knights may be placed on a %d row %d column board.",result, n, m));
 		}
 	}
-}
