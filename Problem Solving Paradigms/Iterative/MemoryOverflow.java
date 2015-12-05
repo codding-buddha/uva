@@ -1,11 +1,27 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class MemoryOverflow {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		int cs = 1;
+		while(tc-- > 0) {
+			int l = in.nextInt();
+			int k = in.nextInt();
+			String o = in.nextString();
+			int c = 0;
+			for(int i = 1; i < l; i++) {
+				for(int j = (i<k? 0 : i-k); j < i; j++) {
+					if(o.charAt(j) == o.charAt(i)) {
+						c++;
+						break;
+					}
+				}
+			}
+			out.println(String.format("Case %d: %d", cs++, c));
+		}
 		out.flush();
 		out.close();
 	}

@@ -1,11 +1,26 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Sales {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int[] a = new int[in.nextInt()];
+			for(int i = 0; i < a.length; i++)
+				a[i] = in.nextInt();
+			int s = 0;
+			for(int i = 1; i < a.length; i++) {
+				int count = 0;
+				for(int j = 0; j < i; j++) {
+					if(a[j] <= a[i])
+						count++;
+				}
+				s+= count;
+			}
+			out.println(s);
+		}
 		out.flush();
 		out.close();
 	}

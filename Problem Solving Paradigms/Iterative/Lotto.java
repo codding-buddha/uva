@@ -1,13 +1,69 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Lotto {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		int tc = 0;
+		while(true) {
+			int k = in.nextInt();
+			if(k == 0)
+				break;
+			int[] n = new int[k];
+			for(int i = 0; i < k; i++) {
+				n[i] = in.nextInt();
+			}
+
+			Arrays.sort(n);
+			if(tc > 0)
+				out.println();
+			tc++;
+			int c = 0;
+			for(int i = 0; (k-i)>5; i++) {
+				for(int j = i+1; (k-j) > 4; j++) {
+					for(int l = j+1; (k-l) > 3; l++) {
+						for(int m = l+1; (k-m) > 2; m++) {
+							for(int p = m+1; (k-p) > 1; p++) { 
+								for(int o = p+1; (k-o) > 0; o++) { 
+									out.println(n[i] + " " + n[j] + " " + n[l] + " " + n[m] + " " + n[p] + " " + n[o]);
+									c++;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			/*
+			for(int i = 1, len = pow(2, k); i < len; i++) {
+				if(setBitCount(i) == 6) {
+					if(c > 0)
+						out.println();
+					for(int j = 0; j < k; j++) {
+						if(((1<<j)&i) > 0) {
+							// System.out.println("J = " + j + " I = " + i);
+							out.print(n[j] + " ");
+						}
+					}
+					c++;
+				}
+			}*/
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static int pow(int n, int x) {
+		int result = 1;
+		while(x > 0){
+			if((x&1) == 1)
+				result = result*n;
+			n = n*n;
+			x = x>>1;
+		}
+		return result;
 	}
 
 	static int min(Integer... numbers) {

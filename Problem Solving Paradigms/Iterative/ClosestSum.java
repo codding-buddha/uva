@@ -1,11 +1,44 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ClosestSum {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int cs = 1;
+		while(true) {
+			int n = in.nextInt();
+			if(n == 0)
+				break;
+			out.println("Case " + cs++ + ":");
+			int[] a = new int[n];
+			for(int i = 0; i < n; i++)
+				a[i] = in.nextInt();
+
+			Arrays.sort(a);
+			int qc = in.nextInt();
+			while(qc-- > 0) {
+				int diff = Integer.MAX_VALUE;
+				int s = 0;
+				int q = in.nextInt();
+				for(int i = 0; i < n; i++) {
+					for(int j = 0; j<n; j++) {
+						if(i == j)
+							continue;
+
+						s = a[i]+a[j];
+						if(Math.abs(s-q) < Math.abs(diff)) {
+							diff = s-q;
+						}
+						if(s >= q) {
+							break;
+						}
+					}
+				}	
+
+				out.println(String.format("Closest sum to %d is %d.", q, (q+diff)));
+			}			
+		}
 		out.flush();
 		out.close();
 	}

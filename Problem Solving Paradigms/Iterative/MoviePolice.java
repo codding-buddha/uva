@@ -1,15 +1,48 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class MoviePolice {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int m = in.nextInt();
+		int q = in.nextInt();
+		String[] db = new String[m];
+		for(int i = 0; i < m; i++)
+			db[i] = in.nextString();
+		while(q-- > 0) {
+			out.println(mostMatching(db, in.nextString()));
+		}
+
 		out.flush();
 		out.close();
 	}
 
+	static int mostMatching(String[] db, String s) {
+		// System.out.println("Query = " + s);
+		int indx = 0;
+		int dis = Integer.MAX_VALUE;
+		for(int i = 0; i < db.length; i++) {
+			if(db[i].length() < s.length())
+				continue;
+			for(int k = 0, len = db[i].length() - s.length(); k <= len; k++) {
+				int d = 0;
+				for(int j = 0; j < s.length(); j++) {
+					if(db[i].charAt(k+j) != s.charAt(j))
+						d++;
+				}
+				// System.out.println("D = " + d);
+				if(d < dis) {
+					// System.out.println(" Found indx = " + i + " distance = " + d);
+					dis = d;
+					indx = i;
+				}
+			}
+			
+		}
+
+		return indx+1;
+	}
 	static int min(Integer... numbers) {
 		int min = numbers[0];
 		for(int i = 1; i < numbers.length; i++) {

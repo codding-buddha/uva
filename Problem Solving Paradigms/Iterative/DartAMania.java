@@ -1,11 +1,57 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class DartAMania {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		HashSet<Integer> val = new HashSet<Integer>();
+		for(int i = 0; i <= 20; i++ ) {
+			val.add(i);
+			val.add(i*2);
+			val.add(i*3);
+		}
+
+		val.add(50);
+
+		while(true) {
+			int n = in.nextInt();
+			if(n <= 0) {
+				out.println("END OF OUTPUT");
+				break;
+			}
+			boolean[][][] visited = new boolean[61][61][61];
+			int p = 0;
+			int c = 0;
+			for(Integer vi: val){
+				for(Integer vj: val) {
+					for(Integer vk: val) {
+						if((vi+vj+vk) == n) {
+							p++;
+							if(!visited[vi][vj][vk]) {
+								c++;
+							}
+
+							visited[vi][vk][vj] = true;
+							visited[vi][vj][vk] = true;
+							visited[vk][vi][vj] = true;
+							visited[vk][vj][vi] = true;
+							visited[vj][vk][vi] = true;
+							visited[vj][vi][vk] = true;
+						}
+					}
+				}
+			}
+
+			if(p == 0 && c == 0) {
+				out.println(String.format("THE SCORE OF %d CANNOT BE MADE WITH THREE DARTS.", n));
+			} else {
+				out.println(String.format("NUMBER OF COMBINATIONS THAT SCORES %d IS %d.",n, c));
+				out.println(String.format("NUMBER OF PERMUTATIONS THAT SCORES %d IS %d.",n, p));
+			}
+			out.println("**********************************************************************");
+		}
+
 		out.flush();
 		out.close();
 	}

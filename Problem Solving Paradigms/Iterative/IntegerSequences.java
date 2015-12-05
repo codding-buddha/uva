@@ -1,22 +1,43 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class IntegerSequences {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0 ){
+			int[] c = readArr(in.nextInt()+1, in);
+			int d = in.nextInt();
+			int k = in.nextInt();
+			if(c.length == 1) {
+				out.println(c[0]);
+				break;
+			}
+			for(int i = 1; ; i++) {
+				k = k - (i*d);
+				if(k<= 0) {
+					long result = 0;
+					long pow = 1;
+					for(int j = 0; j < c.length; j++) {
+						result += c[j]*(j != 0 ? (pow = pow*i) : 1);
+					}
+					out.println(result);
+					break;
+				}
+			}
+		}
+
 		out.flush();
 		out.close();
 	}
 
-	static int min(Integer... numbers) {
-		int min = numbers[0];
-		for(int i = 1; i < numbers.length; i++) {
-			if(numbers[i] < min)
-				min = numbers[i];
+	static int[] readArr(int n, InputReader in) {
+		int[] a = new int[n];
+		for(int i = 0; i < n; i++) {
+			a[i] = in.nextInt();
 		}
-		return min;
+		return a;
 	}
 
 	static <T> void print(T[] items) {

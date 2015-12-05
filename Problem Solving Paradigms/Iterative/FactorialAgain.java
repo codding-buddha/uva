@@ -1,22 +1,28 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class FactorialAgain {
 	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
+		Scanner in = new Scanner(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(in.hasNext()) {
+			int k = in.nextInt();
+			int max = (k*k) + (2*k);
+			int min = (k*2)+1;
+			List<String> p = new ArrayList<String>();
+			for(int i = k+1; i <= 2*k; i++) {
+				if((k*i)%(i-k) == 0) {
+					p.add(String.format("1/%d = 1/%d + 1/%d", k, (k*i)/(i-k), i));
+				}
+			}
+
+			out.println(p.size());
+			for(int i = 0; i < p.size(); i++)
+				out.println(p.get(i));
+		}
+
 		out.flush();
 		out.close();
-	}
-
-	static int min(Integer... numbers) {
-		int min = numbers[0];
-		for(int i = 1; i < numbers.length; i++) {
-			if(numbers[i] < min)
-				min = numbers[i];
-		}
-		return min;
 	}
 
 	static <T> void print(T[] items) {

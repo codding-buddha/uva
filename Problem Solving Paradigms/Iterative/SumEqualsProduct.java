@@ -1,15 +1,80 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class SumEqualsProduct {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		//Map<Integer, String> map = new TreeMap<Integer, String>();
+		//List<Triplet> triplets = new ArrayList<Triplet>();
+		List<Triplet> triplets = new ArrayList<Triplet>();
+		for(int i = 1; i+i+i <= 25600; i++) {
+			for(int j = i; i+j+j <= 25600; j++) {
+				int s = i+j;
+				int p = i*j;
+				if(p <= 10000)
+					continue;
+				int k = s*10000/(p - 10000);
+				s += k;
+
+				if(s > 25600 || k < j)
+					continue;
+
+				if((i+j+k) == (i*j*k)/10000) {
+					Triplet t = new Triplet(i, j, k);
+					// String result = String.format("%.2f = %.2f + %.2f + %.2f = %.2f * %.2f * %.2f", (double)t.sum()/(double)100.0, t.a/(double)100.0, t.b/(double)100.0, t.c/(double)100.0, t.a/(double)100.0, t.b/(double)100.0, t.c/(double)100.0);
+					// map.put(i+j+k, result);
+					triplets.add(t);
+				}
+			}
+		}
+
+		Collections.sort(triplets);
+
+		try{
+			while(true) {
+				int a = (int)(in.nextDouble()*100);
+				int b = (int)(in.nextDouble()*100);
+				for(Triplet t: triplets) {
+					if(t.sum() >= a && t.sum() <= b) {
+						String result = String.format("%.2f = %.2f + %.2f + %.2f = %.2f * %.2f * %.2f", (double)t.sum()/(double)100.0, t.a/(double)100.0, t.b/(double)100.0, t.c/(double)100.0, t.a/(double)100.0, t.b/(double)100.0, t.c/(double)100.0);
+						//out.println(map.get(s));
+						out.println(result);
+					}
+				}
+			}
+		}catch(Exception e) {
+
+		}
 		
+
 		out.flush();
 		out.close();
 	}
 
+	static class Triplet implements Comparable<Triplet> {
+		public int a; 
+		public int b;
+		public int c;
+
+		public Triplet(int i, int j, int k) {
+			a = i;
+			b = j;
+			c = k;
+		}
+
+		public int sum() {
+			return a+b+c;
+		}
+
+		@Override
+		public int compareTo(Triplet t) {
+			if(this.sum() != t.sum())
+				return this.sum() - t.sum();
+			return this.a - t.a;
+		}
+
+	}
 	static int min(Integer... numbers) {
 		int min = numbers[0];
 		for(int i = 1; i < numbers.length; i++) {

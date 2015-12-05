@@ -1,74 +1,57 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BinPacking {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+
+		try{
+
+			while(true) {
+					long a[] = new long[9];
+					 long s[] = new long[6];
+					 long min =Long.MAX_VALUE;
+					for(int i = 0; i < 9; i++)
+						a[i] = in.nextLong();
+
+					s[0]=a[3]+a[6]+a[2]+a[8]+a[1]+a[4];
+					s[1]=a[3]+a[6]+a[1]+a[7]+a[2]+a[5];
+					s[2]=a[5]+a[8]+a[1]+a[7]+a[0]+a[3];
+					s[3]=a[5]+a[8]+a[0]+a[6]+a[1]+a[4];
+					s[4]=a[4]+a[7]+a[2]+a[8]+a[0]+a[3];
+					s[5]=a[4]+a[7]+a[0]+a[6]+a[2]+a[5];
+
+					for(int i=0;i<6;i++)
+					{
+						if(s[i]<min)
+							min=s[i];
+					}
+
+					if(min==s[0])
+						out.println("BCG " + min);
+					else if(min==s[1])
+						out.println("BGC " + min);
+					else if(min==s[3])
+						out.println("CBG " + min);
+					else if(min==s[2])
+						out.println("CGB " + min);					
+					else if(min==s[5])
+						out.println("GBC " + min);
+					else if(min==s[4])
+						out.println("GCB " + min);					
+				}
 		
-		out.flush();
-		out.close();
-	}
+		}catch(Exception e) {
 
-	static int min(Integer... numbers) {
-		int min = numbers[0];
-		for(int i = 1; i < numbers.length; i++) {
-			if(numbers[i] < min)
-				min = numbers[i];
-		}
-		return min;
-	}
+		} finally {
 
-	static <T> void print(T[] items) {
-		if(items == null)
-			return;
-
-		for(int i = 0; i < items.length; i++) {
-			System.out.println(items[i]);
-		}
-	}
-
-	static <T extends Comparable<? super T>> T[] nextPermutation(T[] items) {
-		int first = -1;
-		for(int i = items.length - 2; i >= 0; i--) {
-			if(items[i].compareTo(items[i+1]) < 0) {
-				first = i;
-				break;
-			}
+			out.flush();
+			out.close();
 		}
 
-		if(first < 0)
-		return null;
-
-		for(int j = items.length - 1; j > first; j--) {
-			if(items[j].compareTo(items[first]) > 0) {
-				swap(items, first, j);
-				break;
-			}
-		}
-
-		for(int i = first + 1, j = items.length - 1; i <= j; i++, j--) {
-			swap(items, i, j);
-		}
-
-		return items;
 	}
-
-	static void swap(Comparable[] a, int i, int j) {
-		Comparable t = a[i];
-		a[i] = a[j];
-		a[j] = t;
-	}
-
-	static int setBitCount(int n) {
-		int count = 0;
-		while(n != 0) {
-			n = n & (n-1);
-			count++;
-		}
-
-		return count;
-	}
+	
 
 	static class InputReader
 	{

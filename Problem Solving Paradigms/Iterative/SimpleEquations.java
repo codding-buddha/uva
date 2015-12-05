@@ -1,10 +1,38 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class SimpleEquations {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int a = in.nextInt();
+			int b = in.nextInt();
+			int c = in.nextInt();
+			boolean f = false;
+
+			for(int i = -100; i < a; i++) {
+				for(int j = i+1; j < (a-i); j++) {
+					int k = a - (i+j);
+					if(k == j || k == i)
+						continue;
+					long sq = i*i;
+					sq += j*j + k*k;
+					long m = i*j*k;
+					if(sq == c && m == b) {
+						out.println(i + " " +  j + " " + k);
+						f = true;
+						break;
+					}
+				}
+				if(f)
+					break;
+			}
+
+			if(!f)
+				out.println("No solution.");
+		}
 		
 		out.flush();
 		out.close();

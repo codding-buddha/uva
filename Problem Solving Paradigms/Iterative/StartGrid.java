@@ -1,10 +1,45 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class StartGrid {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		try {
+			while(true) {
+				int n = in.nextInt();
+				int[] s = new int[n+1];
+				int[] e = new int[n+1];
+				for(int i = 1; i <= n; i++) {
+					s[i] = in.nextInt();
+				}
+				for(int i = 1; i <= n; i++) {
+					e[i] = in.nextInt();
+				}
+				int c = 0;
+				int loc = 0;
+				int v = 0;
+				for(int i = 1; i <= n; i++) {
+					for(int j = 1; j <=n; j++) {
+						if(e[i] == s[j]) {
+							loc = j;
+							v = e[i];
+							break;
+						}
+					}
+					for(int k = loc; k > i; k--) {
+						s[k] = s[k-1];
+						c++;
+					}
+					s[i] = v;
+				}
+
+				out.println(c);
+			}	
+		}catch(Exception e) {
+			// out.println(e);
+		}
+		
 		
 		out.flush();
 		out.close();

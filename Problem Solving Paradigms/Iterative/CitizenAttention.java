@@ -1,15 +1,67 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class CitizenAttention {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int nn = in.nextInt();
+			int[] area = new int[25];
+			while(nn-- > 0) {
+				int i = in.nextInt()*5;
+				int j = in.nextInt();
+				int p = in.nextInt();
+				area[i+j] = p;
+			}
+			String mo = "";
+			int minD = Integer.MAX_VALUE;
+			for(int i = 0; i < 25; i++) {
+				for(int j = i+1; j < 25; j++) {
+					for(int k = j+1; k< 25; k++) {
+						for(int l = k+1; l < 25; l++) {
+							for(int m = l+1; m < 25; m++) {
+								int min = 0;
+								for(int a = 0; a< 25; a++) {
+									int[] od = new int[] {i, j, k, l, m};
+									int md = Integer.MAX_VALUE;
+									if(area[a] == 0)
+										continue;
+
+									for(int b = 0; b < od.length; b++) {
+										int d = getDistance(od[b], a)*area[a];
+										if(d<md)
+											md = d;
+									}
+									min += md;
+								}
+
+								if(min < minD) {
+									minD = min;
+									mo = i + " " + j + " " + k + " " + l + " " + m;
+								} 
+							}
+						}
+					}
+				}
+			}
+
+			out.println(mo);
+		}
+
 		out.flush();
 		out.close();
 	}
 
+	static int getDistance(int a, int b) {
+		int i1 = a/5;
+		int j1 = a%5;
+		int i2 = b/5;
+		int j2 = b%5;
+
+		return Math.abs(i2-i1) + Math.abs(j2-j1);
+	}
 	static int min(Integer... numbers) {
 		int min = numbers[0];
 		for(int i = 1; i < numbers.length; i++) {

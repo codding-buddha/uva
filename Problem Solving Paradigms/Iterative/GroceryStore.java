@@ -1,13 +1,67 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class GroceryStore {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		List<Quad> q = new ArrayList<Quad>();
+		for(long i = 1; (4*i) <= 2000; i++) {
+			for(long j = i; (i + 3*j) <= 2000; j++) {
+				for(long k = j; (i + j + 2*k) <= 2000; k++) {
+					long s = i + j + k;
+					long p = i*j*k;
+					if(p <= 1000000)
+						continue;
+
+					long l = (s*1000000)/(p - 1000000);
+					s+= l;
+					if(s > 2000 || l < k)
+						continue;
+					if(Math.abs((i+j+k+l)/100.0 - ((double)i*j*k*l)/100000000.0) < 1e-12) {
+					// if((i+j+k+l)*1000000 == (i*j*k*l)) {
+						q.add(new Quad(i, j, k, l));
+						// out.println(String.format("%.2f %.2f %.2f %.2f", (double)i/100.0, (double)j/100.0, (double)k/100.0, (double)l/100.0));
+					}
+				}
+			}
+		}
+		Collections.sort(q);
+		for(Quad qd : q) {
+			out.println(String.format("%.2f %.2f %.2f %.2f", (double)qd.a/100.0, (double)qd.b/100.0, (double)qd.c/100.0, (double)qd.d/100.0));
+		}
 		out.flush();
 		out.close();
+	}
+
+	static class Quad implements Comparable<Quad> {
+		public long a;
+		public long b;
+		public long c;
+		public long d;
+
+		public Quad(long a, long b, long c, long d) {
+			long[] ar = new long[] {a, b, c, d};
+			Arrays.sort(ar);
+			this.a = ar[0];
+			this.b = ar[1];
+			this.c = ar[2];
+			this.d = ar[3];
+		}
+
+		@Override
+		public int compareTo(Quad q) {
+			if(this.a != q.a)
+				return this.a - q.a < 0 ? -1 : 1;
+			if(this.b != q.b)
+				return this.b - q.b < 0 ? -1 : 1;
+			if(this.c != q.c)
+				return this.c - q.c < 0 ? -1 : 1;
+			if(this.d != q.d)
+				return this.d - q.d < 0 ? -1 : 1;
+			return 0;
+		}
+
 	}
 
 	static int min(Integer... numbers) {

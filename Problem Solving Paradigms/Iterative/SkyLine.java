@@ -1,11 +1,41 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class SkyLine {
+	static int[] skyline;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		skyline = new int[10001];
+		int maxR = 0;
+		try{
+			while(true) {
+				int l = in.nextInt();
+				int h = in.nextInt();
+				int r = in.nextInt();
+				for(int i = l; i <r; i++) {
+					if(skyline[i] < h) {
+						skyline[i] = h;
+					}
+				}
+
+				if(r>maxR)
+					maxR = r;
+			}	
+		}catch(Exception e) {
+		}
+
+		int curr = 0;
+		boolean first = true;
+		for(int i = 0; i <= maxR; i++) {
+			if(skyline[i] != curr) {
+				out.print((first ? "" :" ") + i);
+				first = false;
+				out.print(" " + skyline[i]);
+				curr = skyline[i];
+			}
+		}
+		out.println();
 		out.flush();
 		out.close();
 	}

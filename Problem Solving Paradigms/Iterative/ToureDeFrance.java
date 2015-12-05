@@ -1,10 +1,40 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ToureDeFrance {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		while(true) {
+			int fs = in.nextInt();
+			if(fs == 0)
+				break;
+			int rs = in.nextInt();
+			int[] f = new int[fs];
+			int[] r = new int[rs];
+			double[] d = new double[fs*rs];
+			for(int i = 0; i < fs; i++)
+				f[i] = in.nextInt();
+			for(int i = 0; i < rs; i++)
+				r[i] = in.nextInt();
+			int k = 0;
+			for(int i = 0; i < fs; i++) {
+				for(int j = 0; j < rs; j++) {
+					d[k++] = ((double)r[j])/f[i];
+				}
+			}
+			Arrays.sort(d);
+			double max = 0.0D;
+			for(int i = 1; i < d.length; i++) {
+				//out.println(d[i]);
+				double temp = d[i]/d[i-1];
+				//out.println(temp);
+				if(max < temp){
+					max = temp;
+				}
+			}
+			out.println(String.format("%.2f", max));
+		}
 		
 		out.flush();
 		out.close();

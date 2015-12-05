@@ -1,13 +1,64 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class CubePainting {
+	static int[][] r = new int[][] {
+				{ 0, 1, 2, 3, 4, 5 }, { 1, 5, 2, 3, 0, 4 }, { 2, 1, 5, 0, 4, 3 }, { 3, 1, 0, 5, 4, 2 }, { 4, 0, 2, 3, 5, 1 }, 
+				{ 5, 4, 2, 3, 1, 0 }
+			};
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		try {
+			while(true) {
+				char[] a = new char[6];
+				char[] b = new char[6];
+				String s = in.nextString();
+				for(int i = 0; i < 12; i++) {
+					if(i < 6)
+						a[i] = s.charAt(i);
+					else
+						b[i%6]= s.charAt(i);
+				}
+				out.println(check(a, b));
+			}	
+		}catch(Exception e) {
+
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static String check(char[] a, char[] b) {
+		for(int i = 0; i < 6; i++) {
+			char[] temp = new char[6];
+			for(int j = 0; j < 6; j++) {
+				temp[j] = a[r[i][j]];
+			}
+
+			for(int j = 0; j < 4; j++) {
+				char c = temp[1];
+				temp[1] = temp[2];
+				temp[2] = temp[4];
+				temp[4] = temp[3];
+				temp[3] = c;
+				if(isSame(temp, b))
+					return "TRUE";
+			}
+		}
+		return "FALSE";
+	}
+
+	static boolean isSame(char[] a, char[] b) {
+		if(a.length != b.length)
+			return false;
+		for(int i = 0; i < a.length; i++){
+			if(a[i] != b[i]){
+				return false;
+			}
+		}
+		return true;
 	}
 
 	static int min(Integer... numbers) {

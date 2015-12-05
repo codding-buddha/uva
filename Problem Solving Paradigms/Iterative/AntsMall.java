@@ -1,13 +1,64 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class AntsMall {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		int cs = 1;
+		while(tc-- > 0) {
+			int r = in.nextInt();
+			int c = in.nextInt();
+			boolean[][] p = new boolean[r][c];
+			for(int i = 0; i < r; i++) {
+				String s = in.nextString().trim();
+				for(int j = 0; j < c; j++) {
+					p[i][j] = (s.charAt(j) == '1' ? true : false);
+				}
+			}
+			int min = Integer.MAX_VALUE;
+			for(int i = 0; i < c; i++) {
+				int count = 0;
+				for(int j = 0; j < r; j++) {
+					if(p[j][i]) {
+						int lshift = shiftLeft(j, i, p);
+						int rshift = shiftRight(j, i, p);
+						// out.print("L -> " + lshift + " R-> " + rshift);
+						if(lshift == -1 && rshift == -1)
+							break;
+
+						count += (lshift == -1) ? rshift : ((rshift == -1) ? lshift : min(lshift, rshift));
+					}
+
+					if(j == r-1) {
+						// System.out.print(" Count -> " + count);
+						if(count < min)
+							min = count;
+					}
+				}
+				// out.println();
+			}
+			out.println(String.format("Case %d: %d", cs++, min == Integer.MAX_VALUE ? -1 : min));
+		}
 		out.flush();
 		out.close();
+	}
+
+	static int shiftLeft(int r, int c, boolean[][] p) {
+		int i;
+		for(i = c-1; i >= 0 && p[r][i]; i--) {
+		}
+
+		return i == -1 ? i : (c-i);
+	}
+
+	static int shiftRight(int r, int c, boolean[][] p) {
+		int i;
+		for(i = c+1; i < p[0].length && p[r][i]; i++) {
+		}
+
+		return i == p[0].length ? -1 : (i-c);
 	}
 
 	static int min(Integer... numbers) {

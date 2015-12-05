@@ -1,13 +1,61 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Recycling {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			String[][] cities = new String[100][5];
+			String s = "";
+			int cn = 0;
+			while(!(s = in.nextString().trim()).startsWith("e") && !s.equals("#")) {
+				String[] v = s.split(",");
+				for(int i = 0; i< 5; i++) {
+					cities[cn][getIndex(v[i].charAt(0))] = v[i];
+				}
+				cn++;
+			}
+
+			if(s.equals("#"))
+				break;
+
+			int mCount = Integer.MAX_VALUE;
+			int cIndx = 0;
+			for(int i = 0; i < cn; i++) {
+				int m = 0;
+				for(int j = 0; j < cn; j++) {
+					if(i == j)
+						continue;
+					for(int k = 0; k < 5; k++) {
+						if(!cities[i][k].equals(cities[j][k])) {
+							m++;
+						}
+					}
+				}
+
+				if(m < mCount) {
+					mCount = m;
+					cIndx = i;
+				}
+			}
+
+			out.println(cIndx+1);
+		}
 		out.flush();
 		out.close();
+	}
+
+	static int getIndex(char c) {
+		switch(c) {
+			case 'r': return 0;
+			case 'b': return 1;
+			case 'g': return 2;
+			case 'y': return 3;
+			case 'o': return 4;
+		}
+
+		return 0;
 	}
 
 	static int min(Integer... numbers) {

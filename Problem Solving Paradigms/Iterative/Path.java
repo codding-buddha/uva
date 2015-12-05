@@ -1,13 +1,62 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Path {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		try {
+			while(true) {
+				int m = in.nextInt();
+				List<Pair> p1 = new ArrayList<Pair>();
+				List<Pair> p2 = new ArrayList<Pair>();
+				for(int i = 0; i < m; i++) {
+					String v = in.nextString();
+					for(int j = 0; j < m; j++) {
+						if(v.charAt(j) == '1') {
+							p1.add(new Pair(i, j));
+						}
+						if(v.charAt(j) == '3') {
+							p2.add(new Pair(i, j));
+						}
+					}
+				}
+
+				int d = 0;
+				for(int i = 0, len = p1.size(); i < len; i++) {
+					int min = Integer.MAX_VALUE;
+					Pair d1 = p1.get(i);
+					for(int j = 0, l2 = p2.size(); j < l2; j++) {
+						Pair d2 = p2.get(j);
+						int dis = d1.distance(d2);
+						if(dis < min) {
+							min = dis;
+						}
+					}
+					if(min > d)
+						d = min;
+				}
+
+				out.println(d);
+			}
+		}catch(Exception e) {
+		}
 		out.flush();
 		out.close();
+	}
+
+	static class Pair {
+		public int x;
+		public int y;
+		public Pair(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+
+		public int distance(Pair p) {
+			return Math.abs(this.x - p.x) + Math.abs(this.y - p.y);
+		}
 	}
 
 	static int min(Integer... numbers) {

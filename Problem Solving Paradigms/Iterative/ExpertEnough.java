@@ -1,22 +1,44 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ExpertEnough {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int d = in.nextInt();
+			int[] h = new int[d];
+			int[] l = new int[d];
+			String[] n = new String[d];
+			for(int i = 0; i < d; i++) {
+				n[i] = in.nextString();
+				l[i] = in.nextInt();
+				h[i] = in.nextInt();
+			}
+			int qc= in.nextInt();
+			while(qc-- > 0) {
+				int q = in.nextInt();
+				int indx = -1;
+				for(int i = 0; i < d; i++) {
+					if(q>= l[i] && q<=h[i]) {
+						if(indx < 0) {
+							indx = i;
+						} else {
+							indx = -1;
+							break;
+						}
+					}
+				}
+				out.println(indx != -1 ? n[indx] : "UNDETERMINED");
+			}
+
+			if(tc>0)
+				out.println();
+		}
+
 		out.flush();
 		out.close();
-	}
-
-	static int min(Integer... numbers) {
-		int min = numbers[0];
-		for(int i = 1; i < numbers.length; i++) {
-			if(numbers[i] < min)
-				min = numbers[i];
-		}
-		return min;
 	}
 
 	static <T> void print(T[] items) {
