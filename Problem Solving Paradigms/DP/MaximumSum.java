@@ -1,12 +1,33 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class MaximumSum {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		int n = in.nextInt();
+		int[][]  a = new int[n][n];
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < n; j++) {
+				a[i][j] = in.nextInt();
+				if(j > 0)
+					a[i][j] += a[i][j-1];
+			}
+		}
+
+		int mx = Integer.MIN_VALUE;
+		for(int i = 0; i < n; i++) {
+			for(int j = i; j < n; j++) {
+				int s = 0;
+				for(int r = 0; r < n; r++) {
+					 s+= a[r][j] - (i > 0 ? a[r][i-1] : 0);
+					 mx = Math.max(mx, s);
+					 s = Math.max(s, 0);
+				}
+			}
+		}
 		
-		
+		out.println(mx);
 		out.flush();
 		out.close();
 	}

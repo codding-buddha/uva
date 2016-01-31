@@ -1,14 +1,72 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BarCodes {
+	static int n;
+	static int k;
+	static int m;
+	static long[][][][] lookup;
+
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		try {
+			while(true) {
+				n = in.nextInt();
+				k = in.nextInt();
+				m = in.nextInt();
+				lookup = new long[n+1][k+1][m+1][2];
+				for(int i = 0; i < n+1; i++) {
+					for(int j = 0; j < k+1 ; j++) {
+						for(int l = 0; l < m+1; l++) {
+							lookup[i][j][l][0] = -1;
+							lookup[i][j][l][1] = -1;
+						}
+					}
+				}
+				out.println(nways(1, 1, 1, 1));
+			}
+
+		} catch(InputMismatchException ex) {
+
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static long nways(int i, int b, int pcount, int p) {
+		if(i > n || b > k || pcount > m) {
+			return 0;
+		}
+
+		if(i == n && b == k && pcount <= m)
+			return 1;
+
+		if(lookup[i][b][pcount][p] < 0) {
+
+			lookup[i][b][pcount][p] = p == 1L ?  (nways(i+1, b, pcount+1, 1) + nways(i+1, b+1, 1, 0)) 
+					: (nways(i+1, b, pcount + 1, 0) + nways(i+1, b+1, 1, 1));	
+		}
+
+		return lookup[i][b][pcount][p];
+	}
+
+	static int ways(String com, int bar, int count) {
+		int len = com.length();
+
+		if(len > n || bar > k || count > m) {
+			return 0;
+		}
+
+		if(len == n && bar == k && count <= m)
+			return 1;
+
+		int prev = com.charAt(len - 1);
+		int result = 0;
+		result += prev == 1 ?  (ways(com+"1", bar, count+1) + ways(com+"0", bar+1, 1)) 
+					: (ways(com+ "0", bar, count + 1) + ways(com + "1", bar+1, 1));
+		return result;
 	}
 
 	static int log(int x, int base) {

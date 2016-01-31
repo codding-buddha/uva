@@ -1,11 +1,18 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BrickGame {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		for(int i = 1; i <= tc; i++) {
+			int n = in.nextInt();
+			int[] a = new int[n];
+			for(int j = 0; j < n; j++)
+				a[j] = in.nextInt();
+			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		}
 		
 		out.flush();
 		out.close();

@@ -1,11 +1,29 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ShoppingTrip {
+	static double[][] dis;
+	static int operaCount;
+	static double[] savings;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int n = in.nextInt();
+			dis = new double[n+1][n+1];
+			int m = in.nextInt();
+			while(m-- > 0) {
+				double i = in.nextDouble();
+				double j = in.nextDouble();
+				dis[i][j] = in.nextDouble();
+				dis[j][i] = dis[i][j];
+			}
+			operaCount = in.nextInt();
+			savings = new double[n+1];
+			for(int i = 0; i < operaCount; i++)
+				savings[in.nextInt()] = in.nextDouble();
+		}
 		
 		out.flush();
 		out.close();

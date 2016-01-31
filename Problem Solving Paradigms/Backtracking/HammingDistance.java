@@ -1,18 +1,31 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class HammingDistance {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int n = in.nextInt();
+			int h = in.nextInt();
+			for(int i = 0, len = 1<<n; i < len; i++) {
+				if(setBitCount(i) == h) {
+					for(int j = n-1; j >= 0; j--) {
+						if(((1<<j)&i) != 0) {
+							out.print("1");
+						}else{
+							out.print("0");
+						}
+					}
+					out.println();
+				}
+			}
+			if(tc > 0)
+				out.println();
+		}
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

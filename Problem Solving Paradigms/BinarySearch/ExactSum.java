@@ -1,18 +1,59 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ExactSum {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		try {
+			while(true) {
+				int tc = in.nextInt();
+				int p[] = new int[tc];
+				for(int i = 0; i < tc; i++)
+					p[i] = in.nextInt();
+				int m = in.nextInt();
+				int a = -1, b = -1;
+				int diff = Integer.MAX_VALUE;
+				Arrays.sort(p);
+				for(int i = 0, len = tc; i < len; i++) {
+					int p1 = p[i];
+					int indx = search(p, m-p1, i+1);
+					if(indx == i || indx == -1)
+						continue;
+					if(diff > Math.abs(m - 2*p1)) {
+						diff = m-2*p1;
+						a = p1;
+						b = m-p1;
+					}
+				}
+
+				out.println(String.format("Peter should buy books whose prices are %d and %d.", a, b));
+				out.println();
+			}
+		}catch(Exception e) {
+
+		}
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static int search(int[] a, int v, int l) {
+		int h = a.length-1;
+		int r = -1;
+		while(l <= h) {
+			int m = l + (h-l)/2;
+			if(a[m] == v) {
+				r = m;
+				l = m+1;
+			}else if(a[m] > v) {
+				h = m-1;
+			} else {
+				l = m+1;
+			}
+		}
+
+		return r;
 	}
 
 	static int min(Integer... numbers) {

@@ -1,18 +1,38 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BusDriver {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			int n = in.nextInt();
+			int d = in.nextInt();
+			int r = in.nextInt();
+			if(n == 0 && d == 0 && r == 0)
+				break;
+			int[] m = new int[n];
+			int[] e = new int[n];
+			for(int i = 0; i < n; i++) {
+				m[i] = in.nextInt();
+			}
+
+			for(int i = 0; i < n; i++) {
+				e[i] = in.nextInt();
+			}
+			Arrays.sort(m);
+			Arrays.sort(e);
+			long h = 0;
+			for(int i = 0, j = n-1; i < n && j >= 0; i++, j--) {
+				if(m[i]+e[j] > d) {
+					h+= (e[j]+m[i]) - d;
+				}
+			}
+			out.println(h*r);
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

@@ -1,14 +1,89 @@
+//Trouble13Dots
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Trouble13Dots {
+	static int m;
+	static int n;
+	static  int[] p;
+	static int[] f;
+	static int[][] lookup;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		try {
+
+			while(true) {
+				m = in.nextInt();
+				n = in.nextInt();
+				p = new int[n+1];
+				f = new int[n+1];
+
+				for(int i = 1; i <= n; i++){
+					p[i] = in.nextInt();
+					f[i] = in.nextInt();
+				}
+
+				m += 200;
+				lookup = new int[n+1][m+1];
+				for(int i = 0; i < n+1; i++) {
+					for(int j = 0; j < m+1; j++)
+						lookup[i][j] = -2000;
+				}
+
+				lookup[0][0] = 0;
+
+				int total = 0;
+				for(int i = 1; i <= n; i++) {
+					total += p[i];
+					for(int j = 0, len = Math.min(m, total); j <= len; j++) {
+						lookup[i][j] = lookup[i-1][j];
+						if(j >= p[i])
+							lookup[i][j] = Math.max(lookup[i][j], f[i] + lookup[i-1][j-p[i]]);
+					}
+				}
+
+				m-=200;
+
+				int max = 0;
+				for(int i = 1; i <= m; i++) {
+					max = Math.max(lookup[n][i], max);
+				}
+
+				for(int i = 2001; i <= (m+200); i++) {
+					max = Math.max(max, lookup[n][i]);
+				}
+
+				out.println(max);
+			}
+			
+		}catch(InputMismatchException e) {
+
+		}
 		out.flush();
 		out.close();
+	}
+
+	static int maxValue(int i, int budget) {
+		if(i == n-1) {
+			if(p[i] <= budget)
+				return f[i];
+			else
+				return 0;
+		}
+
+		if(lookup[i][budget] != -1)
+			return lookup[i][budget];
+		int result = 0;
+		if(p[i] <= budget) {
+			result = Math.max(f[i] + maxValue(i+1, budget-p[i]), maxValue(i+1, budget));
+		} else {
+			result = maxValue(i+1, budget);
+		}
+
+		lookup[i][budget] = result;
+
+		return lookup[i][budget];
 	}
 
 	static int log(int x, int base) {

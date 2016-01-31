@@ -1,19 +1,132 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BitMap {
+	static int charc;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			String f = in.nextString();
+			if(f.equals("#")){
+				break;
+			}
+			
+			int s = in.nextInt();
+			int e = in.nextInt();
+			if(s == 0 || e == 0) {
+				out.println(String.format("%s%4d%4d\n", f.equals("B") ? "D" : "B", s, e));
+				continue;	
+			}
+			String input = in.nextString();
+			if(f.equals("B")) {
+				while(input.length() != s*e) {
+					input += in.nextString();
+				}
+			}
+			
+			out.println(String.format("%s%4d%4d", f.equals("B") ? "D" : "B", s, e));
+			String result = f.equals("B") ? convertToD(input, s, e) : converToB(input, s, e);
+			out.print(result.endsWith("\n") ? result : (result + "\n"));
+		}
 		
 		out.flush();
 		out.close();
 	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	
+	static String converToB(String input, int s, int e) {
+		int[][] a = new int[s][e];
+		convertB(input, new int[] {-1}, 0, s-1, 0, e-1, a);
+		charc = 0;
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0; i < s; i++) {
+			for(int j = 0; j < e; j++) {
+				append(sb, a[i][j] == 0 ? '0' : '1');
+			}
+		}
+		return sb.toString();
 	}
+
+	static String convertToD(String input, int s, int e) {
+		int[][] a = new int[s][e];
+		int k = 0;
+		for(int i = 0; i < s; i++) {
+			for(int j = 0; j < e; j++) {
+				a[i][j] = input.charAt(k++) - '0';
+			}
+		}
+		charc = 0;
+		StringBuilder sb = new StringBuilder();
+		convertD(a, 0, s-1, 0, e-1, sb);
+		return sb.toString();
+	}
+
+	static void convertB(String input, int[] indx,  int r0, int r1, int c0, int c1, int[][] a) {
+		if(indx[0] >= input.length() || (r0 > r1) || (c0 > c1))
+			return;
+		indx[0] = indx[0]+1;
+		char c = input.charAt(indx[0]);
+		if(c != 'D') {
+			for(int i = r0; i <= r1; i++) {
+				for(int j= c0; j <= c1; j++) {
+					a[i][j] = c-'0'; 
+				}
+			}
+		} else {
+			int sr = (r1-r0)+1;
+			int sc = (c1-c0)+1;
+			int tr = r0 + (int)Math.ceil(sr/2);
+			int tc = c0 + (int)Math.ceil(sc/2);
+			tr -= sr%2==0 ? 1: 0;
+			tc -= sc%2==0 ? 1: 0;
+			convertB(input, indx, r0, tr, c0, tc, a);
+			convertB(input, indx, r0, tr, tc+1, c1, a);
+			convertB(input, indx, tr+1, r1, c0, tc, a);
+			convertB(input, indx, tr+1, r1, tc+1, c1, a);
+		}
+	}
+	
+	static void append(StringBuilder sb, char c) {
+		sb.append(c);
+		charc++;
+		if(charc == 50){
+			charc = 0;
+			sb.append("\n");
+		}
+	}
+
+	static void convertD(int[][] a, int r0, int r1, int c0, int c1, StringBuilder sb) {
+		if(r0 > r1 || c0 > c1)
+			return;
+
+		int cnt0 = 0, cnt1 = 0;
+		for(int i = r0; i <= r1; i++) {
+			for(int j = c0; j <= c1; j++) {
+				if(a[i][j] == 1)
+					cnt1++;
+				else
+					cnt0++;
+				if(cnt0 > 0 && cnt1 > 0) {
+					int sr = (r1-r0)+1;
+					int sc = (c1-c0)+1;
+					int tr = r0 + (int)Math.ceil(sr/2);
+					int tc = c0 + (int)Math.ceil(sc/2);
+
+					tr -= sr%2==0 ? 1: 0;
+					tc -= sc%2==0 ? 1: 0;
+					append(sb, 'D'); 
+					convertD(a, r0,  tr, c0, tc, sb);
+					convertD(a, r0, tr, tc+1, c1, sb);
+					convertD(a, tr+1, r1, c0, tc, sb);
+					convertD(a, tr+1, r1, tc+1, c1, sb);
+					return;
+				}
+			}
+		}
+
+		append(sb, cnt0 > 0 ? '0' : '1');
+	}
+
 
 	static int min(Integer... numbers) {
 		int min = numbers[0];

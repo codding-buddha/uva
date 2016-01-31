@@ -1,11 +1,58 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ECoins {
+	static int n;
+	static int[] ev;
+	static int[] av;
+	static int e;
+	static int MAX = Integer.MAX_VALUE;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			n = in.nextInt();
+			e = in.nextInt();
+			av = new int[n];
+			ev = new int[n];
+			int[][] dp = new int[e+1][e+1];
+
+			for(int i = 0; i < e+1; i++) {
+				for(int j = 0; j < e+1; j++) {
+					dp[i][j] = MAX;
+				}
+			}
+
+			for(int i = 0; i < n; i++) {
+				av[i] = in.nextInt();
+				ev[i] = in.nextInt();
+			}
+
+			dp[0][0] = 0;
+
+			for(int i = 0; i < n; i++) {
+				for(int v1 = av[i]; v1 <= e; v1++) {
+					for(int v2 = ev[i]; v2 <= e; v2++) {
+						if(dp[v1-av[i]][v2-ev[i]] != MAX)
+							dp[v1][v2] = Math.min(1 + dp[v1-av[i]][v2-ev[i]], dp[v1][v2]);
+					}
+				}
+			}
+
+			int t = e*e;
+			int ans = MAX;
+			for(int i = 0; i <= e; i++) {
+				for(int j = 0; j <= e; j++) {
+					if(i*i + j*j == t && dp[i][j] != MAX) {
+						if(ans > dp[i][j])
+							ans = dp[i][j];
+					}
+				}
+			}
+			
+			out.println(ans == MAX ? "not possible" : ans);
+		}
 		
 		out.flush();
 		out.close();
@@ -13,6 +60,14 @@ class Main {
 
 	static int log(int x, int base) {
 		return (int)(Math.log(x)/Math.log(base));
+	}
+
+	static int square(int n) {
+		return n*n;
+	}
+
+	static boolean isSqrt(int n, int v) {
+		return n == v*v;
 	}
 
 	static int min(Integer... numbers) {

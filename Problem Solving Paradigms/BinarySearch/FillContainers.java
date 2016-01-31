@@ -1,18 +1,65 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class FillContainers {
+	static int n, m;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		try {
+			while(true) {
+				n = in.nextInt();
+				m = in.nextInt();
+				int[] a = new int[n];
+				int l = 0;
+				int h = 0;
+				for(int i = 0;  i < n; i++){
+					a[i] = in.nextInt();
+					h+=a[i];
+				}
+				l = h/m;
+				int min = Integer.MAX_VALUE;
+				// System.out.println("Low = " + l + " High = " + h);
+				while(l <= h) {
+					int v = l +  (h-l)/2;
+					if(assignable(a, v)) {
+						if(min > v)
+							min = v;
+						h = v-1;
+					}else {
+						l = v+1;
+					}
+				}
+
+				out.println(min);
+			}
+		}catch(InputMismatchException e) {
+
+		}
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static boolean assignable(int[] a, int v) {
+		int s = 0;
+		int c = 0;
+		for(int i = 0; i < a.length; i++) {
+			s += a[i];
+			if(s > v) {
+				c++;
+				if(c > m)
+					return false;
+				if(a[i] > v)
+					return false;
+
+				s = a[i];
+			}
+		}
+
+		if(s <= v)
+			c++;
+		return c <= m;
 	}
 
 	static int min(Integer... numbers) {

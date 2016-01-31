@@ -1,18 +1,59 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BackTo8Queens {
+	static int[] start;
+	static int[] row;
+	static int min;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		int cs = 1;
+		try{
+			while(true) {
+				min = Integer.MAX_VALUE;
+				start = new int[8];
+				row = new int[8];
+				for(int i = 0; i < 8; i++)
+					start[i] = in.nextInt()-1;
+				findMove(0);
+				out.println(String.format("Case %d: %d", cs++, min));
+			}
+		}catch(InputMismatchException e) {
+
+		}
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static boolean canPlace(int c, int r) {
+		for(int i = 0; i < c; i++) {
+			if(row[i] == r || (Math.abs(c-i) == Math.abs(r - row[i]))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	static void findMove(int c) {
+		if(c == 8) {
+			int m = 0;
+			for(int i = 0; i < 8; i++) {
+				m += (row[i] == start[i] ? 0 : 1);
+			}
+			// System.out.println("MIN = " + m);
+			if(min > m)
+				min = m;
+
+			return;
+		}
+
+		for(int i = 0; i < 8; i++) {
+			if(canPlace(c, i)) {
+				row[c] = i;
+				findMove(c+1);
+			}
+		}
 	}
 
 	static int min(Integer... numbers) {

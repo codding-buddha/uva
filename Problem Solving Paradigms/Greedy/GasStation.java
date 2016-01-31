@@ -1,18 +1,62 @@
+//GasStation
 import java.io.*;
 import java.util.*;
 
-class Main {
+class GasStation {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			int l = in.nextInt();
+			int g = in.nextInt();
+			if(l == 0 || g == 0)
+				break;
+			Interval[] intervals = new Interval[g];
+			for(int i = 0; i < intervals.length; i++) {
+				int x = in.nextInt();
+				int r = in.nextInt();
+				intervals[i] = new Interval(x-r, x+r > l ? l : (x+r));
+			}
+			Arrays.sort(intervals);
+			int c = 0;
+			int i = 0;
+			int s = 0;
+			Interval si = intervals[0];
+			while(s < l) {
+				int temp = s;
+				for(;i < g; i++) {
+					if(intervals[i].s <= s)
+						temp = Math.max(temp, intervals[i].e);
+					else
+						break;
+				}
+				
+				if(s == temp)
+					break;
+				
+				s = temp;
+				c++;				
+			}
+
+			out.println(s < l  ? -1 : g-c);
+		}
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static class Interval implements Comparable<Interval> {
+		public int s;
+		public int e;
+		public Interval(int s, int e) {
+			this.s = s < 0 ? 0 : s;
+			this.e = e;
+		}
+
+		public int compareTo(Interval i) {
+			return this.s == i.s ? i.e-this.e: this.s-i.s;
+		}
+
 	}
 
 	static int min(Integer... numbers) {

@@ -1,14 +1,44 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
-	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
+class Luggage {
+	static int[] a;
+	static int sum;
+	static int n;
+	static int[][] lookup;
+	public static void main(String[] args) throws IOException{
+		// InputReader in = new InputReader(System.in);
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = Integer.parseInt(in.readLine().trim());
+		while(tc-- > 0) {
+			String[] tokens = in.readLine().trim().split(" ");
+			a = new int[tokens.length];
+			sum = 0;
+			n = a.length;
+			for(int i = 0; i < a.length; i++) {
+				a[i] = Integer.parseInt(tokens[i]);
+				sum += a[i];
+			}
+			lookup = new int[n+1][sum+1];
+			out.println(possible(0, 0) ? "YES" : "NO");
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static boolean possible(int i, int s) {
+		if(i == n) {
+			lookup[i][s] = (sum-s == s) ? 1 : 2;
+			return lookup[i][s] == 1;
+		}
+		if(lookup[i][s] != 0)
+			return lookup[i][s] == 1;
+
+		lookup[i][s] = (possible(i+1, s + a[i]) || possible(i+1, s)) ? 1 : 2;
+
+		return lookup[i][s] == 1;
 	}
 
 	static int log(int x, int base) {

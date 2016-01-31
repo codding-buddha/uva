@@ -1,20 +1,93 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
-	public static void main(String[] args) {
+class Dominoes {
+	static Piece beg;
+	static Piece end;
+	static int n;
+	static Piece[] a;
+	static BitSet used;
+	public static void main(String[] args) throws Exception {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		// OutputWriter out = new OutputWriter(new FileOutputStream("output.txt"));
+		while(true) {
+			n = in.nextInt();
+			if(n == 0)
+				break;
+			int m = in.nextInt();
+			used = new BitSet(m);
+			a = new Piece[m];
+			beg = new Piece(in.nextInt(), in.nextInt());
+			end = new Piece(in.nextInt(), in.nextInt());
+			for(int i = 0; i < m; i++) {
+				used.set(i, true);
+				a[i] = new Piece(in.nextInt(), in.nextInt());
+				used.set(i, false);
+			}
+
+			boolean pos = isPossible(beg);
+			out.println(pos ? "YES" : "NO");
+		}
+
 		out.flush();
 		out.close();
+		// Scanner f1 = new Scanner(new File("actual.txt"));
+		// Scanner f2 = new Scanner(new File("output.txt"));
+
+		// int ln = 1;
+		// while(f1.hasNextLine()) {
+		// 	String l1 =  f1.nextLine();
+		// 	String l2 = f2.nextLine();
+		// 	//System.out.println(l1);
+		// 	// System.out.println(l2);
+		// 	if(!l1.equals(l2)) {
+		// 		System.out.println("Line Number " + ln);
+		// 		System.out.println("Diff : " + l1 + " -> " + l2);
+		// 		break;
+		// 	}
+		// 	ln++;
+		// }
+
+		// f1.close();
+		// f2.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static boolean isPossible(Piece adj) {
+		if(used.cardinality() == n && adj.e == end.s) {
+			return true;
+		}
+
+		boolean pos = false;
+		for(int i = 0; i < a.length; i++) {
+			if(!used.get(i)){
+				if(adj.e == a[i].s || adj.e == a[i].e) {
+					used.set(i, true);
+					if(adj.e == a[i].e) {
+						a[i].e = a[i].s;
+						a[i].s = adj.e;
+					}
+
+					pos = isPossible(a[i]);
+					used.set(i, false);
+
+					if(pos)
+						return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
+	static class Piece {
+		public int s;
+		public int e;
+		public Piece(int i, int j) {
+			this.s = i;
+			this.e = j;
+		}
+	}
 	static int min(Integer... numbers) {
 		int min = numbers[0];
 		for(int i = 1; i < numbers.length; i++) {

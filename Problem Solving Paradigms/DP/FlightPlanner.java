@@ -1,14 +1,63 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class FlightPlanner {
+	static int[][] alti;
+	static int steps;
+	static int[][] lookup;
+	static int MAX = 100000000;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int dis = in.nextInt();
+			steps = dis/100;
+			lookup = new int[10][steps+1];
+			alti = new int[10][steps];
+			for(int i = 9; i >= 0; i--) {
+				for(int j = 0; j < alti[i].length; j++) {
+					alti[i][j] = in.nextInt();
+					lookup[i][j] = MAX;
+				}
+
+				lookup[i][steps] = MAX;
+			}
+
+			lookup[0][0] = 0;
+
+			for(int j = 1; j <= steps; j++) {
+				for(int i = 0; i < 10; i++) {
+					lookup[i][j] = Math.min(Math.min(lookup[i][j-1] + 30 - alti[i][j-1], i > 0 ? lookup[i-1][j-1] + 60 - alti[i-1][j-1] : MAX), i < 9 ? lookup[i+1][j-1] + 20 - alti[i+1][j-1]: MAX);
+				}
+			}
+
+			out.println(lookup[0][steps]);
+			out.println();
+
+			// out.println(fuelCost(0, 0));
+			// out.println();
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static int fuelCost(int a, int d) {
+		if(d == steps) {
+			if(a > 0)
+				return MAX;
+			else
+				return 0;
+		}
+
+		if(lookup[a][d] != 0) {
+			return lookup[a][d];
+		}
+
+		lookup[a][d] = Math.min(Math.min(30+fuelCost(a, d+1) - alti[a][d], a > 0 ? (20 + fuelCost(a-1, d+1) - alti[a][d]) : MAX),
+								a < 9 ? (60 + fuelCost(a+1, d+1) - alti[a][d]) : MAX);
+		return lookup[a][d];
 	}
 
 	static int log(int x, int base) {

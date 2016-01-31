@@ -1,18 +1,41 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Bars {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int l = in.nextInt();
+			boolean found = l == 0 ? true : false;
+			int[] a = new int[in.nextInt()];
+			for(int i = 0;  i < a.length; i++) {
+				a[i] = in.nextInt();
+			}
+			
+			for(int i = 1, len = 1 << a.length; i < len; i++) {
+				int s = 0;
+				for(int j = 0; j < a.length; j++) {
+					if((i&(1<<j)) > 0) {
+						s+= a[j];
+						if(s > l)
+							break;
+					}
+				}
+
+				if(s > l) {
+					continue;
+				} else if(s == l){
+					found = true;
+					break;
+				}
+			}
+
+			out.println(found ? "YES" : "NO");
+		}
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

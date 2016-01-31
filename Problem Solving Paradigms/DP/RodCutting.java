@@ -1,12 +1,38 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class RodCutting {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		int l = in.nextInt();
+		int n = in.nextInt();
+
+		int[] a = new int[n+2];
+		int[][] dp = new int[n+2][n+2];
+
+		a[0] = 0;
+		a[n+1] = l;
+
+		for(int i = 1; i <=n; i++) {
+			a[i] = in.nextInt();
+		}
+
+		for(int i = 2; i <= n+1; i++) {
+			for(int j = 0; (j+i) <= n+1; j++) {
+				int min = Integer.MAX_VALUE;
+				int rodLen = a[j+i] - a[j];
+				for(int k = 1; k < (i+j); k++) {
+					int len = rodLen + dp[j][k] + dp[k][i+j];
+					if(len < min)
+						min = len;
+				}
+				dp[j][j+i] = min;
+			}
+		}
 		
-		
+		out.println(dp[0][n+1]);
+
 		out.flush();
 		out.close();
 	}

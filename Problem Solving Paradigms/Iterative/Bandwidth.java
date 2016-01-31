@@ -1,18 +1,73 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Bandwidth {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		String str = null;
+		while(!(str = in.nextString()).equals("#")) {
+			Map<Character, List<Character>> lookup = new TreeMap<Character, List<Character>>();
+			String[] t = str.split(";");
+			for(int i = 0; i < t.length; i++) {
+				if(!lookup.containsKey(t[i].charAt(0))) {
+					lookup.put(t[i].charAt(0), new ArrayList<Character>());
+				}
+				List<Character> l = lookup.get(t[i].charAt(0));
+				for(int j = 2; j < t[i].length(); j++) {
+					char c = t[i].charAt(j);
+					l.add(c);
+					if(!lookup.containsKey(c))
+						lookup.put(c, new ArrayList<Character>());
+					lookup.get(c).add(t[i].charAt(0));
+				}
+			}
+			int count = lookup.keySet().size();
+			Character[] p = new Character[count];
+			int indx = 0;
+			for(char c : lookup.keySet()) {
+				p[indx++] = c;
+			}
+
+			int cost = Integer.MAX_VALUE;
+			String result = null;
+
+			do {
+				int co = Integer.MIN_VALUE;
+				boolean isValid = true;
+				for(int i = 0; i < p.length; i++) {
+					List<Character> l = lookup.get(p[i]);
+					int cv = 0;
+					for(int j = 0; j < l.size(); j++) {
+						for(int k = 0; k < p.length; k++) {
+							if(p[k] == l.get(j)) {
+								if(cv < Math.abs(k-i))
+									cv = Math.abs(k-i);
+								break;
+							}
+						}
+					}
+
+					if(co < cv){
+						co = cv;
+					}
+				}
+
+				if(isValid) {
+					if(co < cost) {
+						cost = co;
+						result = "";
+						for(int i = 0; i < p.length; i++) 
+							result += ((i > 0 ? " ": "") + p[i]);
+					}
+				}
+			}while(nextPermutation(p) != null);
+
+			out.println(result + " -> " + cost);
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {
@@ -29,7 +84,7 @@ class Main {
 			return;
 
 		for(int i = 0; i < items.length; i++) {
-			System.out.println(items[i]);
+			System.out.print((i > 0 ? " " : "") + items[i]);
 		}
 	}
 

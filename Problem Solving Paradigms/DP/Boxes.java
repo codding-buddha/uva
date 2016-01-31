@@ -1,14 +1,74 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Boxes {
+	static int n;
+	static int[] w;
+	static int[] l;
+	static int[][] lookup;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			n = in.nextInt();
+			if(n == 0)
+				break;
+			w = new int[n+1];
+			l = new int[n+1];
+
+			int max = 0;
+			for(int i = 1; i <= n; i++) {
+				w[i] = in.nextInt();
+				l[i] = in.nextInt();
+				max = Math.max(Math.max(w[i], l[i]), max);
+			}
+
+			lookup = new int[n+1][max + 1];
+
+			for(int i = 0; i < n; i++)
+				lookup[n][w[i]] = 1;
+			
+			for(int i = 1; i < n+1; i++) {
+				for(int j = 1; j < max+1; j++) {
+					if(w[i] <= j) {
+						lookup[i][j] = Math.max(lookup[i-1][j], 1 + lookup[i-1][Math.min(j-w[i], l[i])]);
+					} else {
+						lookup[i][j] = lookup[i-1][j];
+					}
+				}
+			}
+
+			int val = 0;
+			for(int i = 1;  i <= max; i++) {
+				val = Math.max(val, lookup[n][i]);
+			}
+			out.println(val);
+			//out.println(boxCount(0, 2*max));
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static int boxCount(int i, int minW) {
+		if(i == n-1) {
+			lookup[i][minW] = w[i] <= minW ? 1 : 0;
+			return lookup[i][minW];
+		}
+
+		if(lookup[i][minW] != -1)
+			return lookup[i][minW];
+
+		int count = 0;
+		if(w[i] <= minW) {
+			count = Math.max(boxCount(i+1, minW), 1 + boxCount(i+1, Math.min(l[i], minW-w[i])));
+		} else {
+			count = boxCount(i+1, minW);
+		}
+
+		lookup[i][minW] = count;
+
+		return lookup[i][minW];
 	}
 
 	static int log(int x, int base) {

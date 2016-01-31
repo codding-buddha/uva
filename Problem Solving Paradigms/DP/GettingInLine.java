@@ -1,14 +1,123 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class GettingInLine {
+	static double[][] dist;
+	static double[][] lookup;
+	static int[][] selection;
+	static int n;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = 1;
+		while(true) {
+			n = in.nextInt();
+			if(n == 0)
+				break;
+			
+			out.println("**********************************************************");
+			out.println(String.format("Network #%d", tc++));
+
+			lookup = new double[n+1][(1<<n)+1];
+			dist = new double[n][n];
+
+			Point[] points = new Point[n];
+			for(int i = 0; i < n; i++) {
+				points[i] = new Point(in.nextInt(), in.nextInt());
+			}
+
+			for(int i = 0; i < n; i++) {
+				for(int j = 0; j < n; j++) {
+					dist[i][j] = points[i].distance(points[j]);
+				}
+			}
+
+			int[] order = new int[n-1];
+			double cableReq = Float.MAX_VALUE;
+			int[][] bests = null;
+			int selected = 0;
+			int indx = 0;
+			int mask = 1;
+			int prev = 0;
+			for(int i = 0; i < n; i++) {
+				selection = new int[n][(1<<n)+1];
+				lookup = new double[n+1][(1<<n)+1];
+				double result = tsp(i, 1<<i);
+				if(result < cableReq) {
+					cableReq = result;
+					bests = selection;
+					mask = 1<<i;
+					indx = i;
+					prev = i;
+				}
+			}
+
+			
+			while(selected != n-1) {
+				int next = bests[indx][mask];
+				order[selected++] = next;
+				indx = next;
+				mask = mask | (1<<next);
+			}
+
+			
+			for(int i = 0; i < order.length; i++) {
+				out.println(String.format("Cable requirement to connect %s to %s is %.2f feet.", points[prev], points[order[i]], points[prev].distance(points[order[i]])));
+				prev = order[i];
+			}
+
+			out.println(String.format("Number of feet of cable required is %.2f.", cableReq));
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+
+	static double tsp(int i, int mask) {
+		if(mask == ((1<<n) - 1)) {
+			return 0;
+		}
+
+		if(lookup[i][mask] != 0)
+			return lookup[i][mask];
+
+		double min = Double.MAX_VALUE;
+		for(int k = 0; k < n; k++) {
+			if(k != i && (mask & (1<<k)) == 0) {
+				double result = dist[i][k] + tsp(k, mask|(1<<k));
+				if(min > result){
+					min = result;
+					selection[i][mask] = k;
+				}
+			}
+		}
+
+		lookup[i][mask] = min;
+		return lookup[i][mask];
+	}
+
+
+	static class Point {
+		public int x;
+		public int y;
+
+		public Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		double distance(Point p) {
+			return Math.sqrt(square(this.x - p.x)+square(this.y - p.y))  + 16;
+		}
+		@Override
+		public String toString() {
+			return String.format("(%d,%d)", x, y);
+		}
+	}
+
+	static long square(long x) {
+		return x*x;
 	}
 
 	static int log(int x, int base) {

@@ -1,11 +1,33 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class NumberingRoads {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		try {
+			int tc = 1;
+			while(true) {
+				int r = in.nextInt();
+				int n = in.nextInt();
+				if(n == 0 || r == 0)
+					break;
+				int suffixesCount = (int)Math.ceil(((double)(r-n))/n);
+
+				out.print(String.format("Case %d: ", tc++));
+
+				if(suffixesCount <= 0) {
+					out.println(0);
+				} else if(suffixesCount > 26) {
+					out.println("impossible");
+				} else {
+					out.println(suffixesCount);
+				}
+			}
+
+		} catch(InputMismatchException ex) {
+
+		}
 		
 		out.flush();
 		out.close();

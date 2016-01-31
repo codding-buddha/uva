@@ -1,11 +1,60 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class MurciaSkyline {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		for(int t = 0; t < tc; t++) {
+			int n = in.nextInt();
+			int[] h = new int[n];
+			int[] w = new int[n];
+			for(int i = 0; i < n; i++) {
+				h[i] = in.nextInt();
+			}
+
+			for(int i = 0; i < n; i++) {
+				w[i] = in.nextInt();
+			}
+
+			int[] mli = new int[n];
+			int[] mld = new int[n];
+			int[] mwi = new int[n];
+			int[] mwd = new int[n];
+			
+			for(int i = n-1; i >= 0; i--) {
+				mli[i] = 1;
+				mld[i] = 1;
+				mwi[i] = w[i];
+				mwd[i] = w[i];
+				for(int j = i+1; j < n; j++) {
+					if(h[i] < h[j]) {
+						mli[i] = Math.max(mli[i], mli[j] + 1);
+						mwi[i] = Math.max(mwi[i], mwi[j] + w[i]);
+					}
+					
+
+					if(h[i] > h[j]) {
+						mld[i] = Math.max(mld[i], mld[j] + 1);
+						mwd[i] = Math.max(mwd[i], mwd[j] + w[i]);
+					}
+				}
+			}
+
+			int mi = 0, md = 0;
+			for(int i = 0; i < n; i++) {
+				mi = Math.max(mi, mwi[i]);
+				md = Math.max(md, mwd[i]);
+			}
+
+			if(mi >= md) {
+				out.println(String.format("Case %d. Increasing (%d). Decreasing (%d).", t+1, mi, md));
+			} else {
+				out.println(String.format("Case %d. Decreasing (%d). Increasing (%d).", t+1, md, mi));
+			}
+
+		}
 		
 		out.flush();
 		out.close();

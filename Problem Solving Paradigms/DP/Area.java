@@ -1,11 +1,56 @@
 import java.io.*;
 import java.util.*;
+import java.math.*;
 
-class Main {
+class Area {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		int cs = 1;
+		while(tc-- > 0) {
+			int n = in.nextInt();
+			int m = in.nextInt();
+			long k = in.nextLong();
+			long limit = k;
+			long[][] a = new long[n][m];
+
+
+			for(int i = 0; i < n; i++) {
+				for(int j = 0; j < m; j++) {
+					a[i][j] = in.nextLong();
+					if(j > 0)
+						a[i][j] += a[i][j-1];
+				}
+			}
+
+			long minPrice = 0;
+			int mxArea = 0;
+			
+			for(int i = 0; i < m; i++) {
+				for(int j = i; j < m; j++) {
+					long sum = 0;
+					int prev = 0;
+					for(int r = 0; r < n; r++) {
+						long curr = a[r][j] - (i > 0 ? a[r][i-1]: 0);
+						sum += curr;
+						while(sum > limit) {
+							long val = a[prev][j] - (i > 0 ? a[prev][i-1]: 0);
+							sum -= val;
+							prev++;
+						}
+						int area = (j - i + 1)*(r-prev+1);
+						if(area > mxArea) {
+							mxArea = area;
+							minPrice = sum;
+						} else if(area == mxArea && minPrice > sum) {
+							minPrice = sum;
+						}
+					}
+				}
+			}
+			out.println(String.format("Case #%d: %d %d", cs++, mxArea, minPrice));
+		}
 		
 		out.flush();
 		out.close();

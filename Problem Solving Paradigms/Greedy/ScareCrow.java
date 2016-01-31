@@ -1,18 +1,36 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ScareCrow {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		int cs = 1;
+
+		while(tc-- > 0) {
+			int n = in.nextInt();
+			char[] field = in.nextString().toCharArray();
+			int c = 0;
+			for(int i = 1; i <= n; ) {
+				if(field[i-1] == '#') {
+					i++;
+					continue;
+				}
+
+				c++;
+				i = i+3;
+				// if(i >= n && (i-1) < n)
+				// 	c += field[i-1] == '.' ? 1 : 0;
+			}
+
+			if(field.length == 1 && field[0] == '.')
+				c++;
+			out.println(String.format("Case %d: %d", cs++, c));
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

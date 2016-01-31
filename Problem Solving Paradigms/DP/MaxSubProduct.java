@@ -1,11 +1,34 @@
 import java.io.*;
 import java.util.*;
+import java.math.*;
 
-class Main {
+class MaxSubProduct {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		try {
+			while(true) {
+				List<String> n = new ArrayList<String>();
+				String v;
+				while(!(v = in.nextString()).equals("-999999")) {
+					n.add(v);
+				}
+				BigInteger max = new BigInteger(n.get(0));
+				BigInteger currMax = new BigInteger(n.get(0));
+				BigInteger currMin = new BigInteger(n.get(0));
+				for(int i = 1, len = n.size();  i < len; i++) {
+					BigInteger curr = new BigInteger(n.get(i));
+					BigInteger temp = curr.max(currMax.multiply(curr)).max(currMin.multiply(curr));
+					currMin = curr.min(currMax.multiply(curr)).min(currMin.multiply(curr));
+					currMax = temp;
+					max = max.max(currMax);
+				}
+				out.println(max);
+			}
+
+		}catch(InputMismatchException e) {
+
+		}
 		
 		out.flush();
 		out.close();

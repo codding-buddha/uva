@@ -1,18 +1,38 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Cantor {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		while(true) {
+			String s = in.nextString();
+			if(s.equals("END"))
+				break;
+			double a = Double.parseDouble(s);
+			if(a == 1.0F || a == 0.0F) {
+				out.println("MEMBER");
+				continue;
+			}
+
+			for(int i = 0; i < 10; i++) {
+				double c = a*3;
+				int k = (int)c;
+				if(k == 1) {
+					out.println("NON-MEMBER");
+					break;
+				}
+
+				a = c-k;
+
+				if(a < 0 || i == 9) {
+					out.println("MEMBER");
+					break;
+				}
+			}
+		}
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

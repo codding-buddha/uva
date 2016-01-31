@@ -1,11 +1,34 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Jackpot {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			int n = in.nextInt();
+			if(n == 0)
+				break;
+			int[] a = new int[n];
+			for(int i = 0; i < n; i++)
+				a[i] = in.nextInt();
+
+			int max = a[0];
+			int curr = Math.max(a[0], 0);
+
+			for(int i = 1; i < n; i++) {
+				curr += a[i];
+				max = Math.max(Math.max(max, curr), a[i]);
+				if(curr < 0)
+					curr = 0;
+			}
+
+			if(max > 0) {
+				out.println(String.format("The maximum winning streak is %d.", max));
+			} else {
+				out.println("Losing streak.");
+			}
+		}
 		
 		out.flush();
 		out.close();

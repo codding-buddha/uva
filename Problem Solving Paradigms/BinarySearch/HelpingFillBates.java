@@ -1,18 +1,68 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class HelpingFillBates {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		char[] s = in.nextString().toCharArray();
+		ArrayList<Integer>[] l = new ArrayList[52];
+		for(int i = 0; i < l.length; i++)
+			l[i] = new ArrayList<Integer>();
+
+		for(int i = 0; i < s.length; i++){
+			int indx = s[i] >= 97 ? ((s[i]-97) + 26) : (s[i] - 65);
+			l[indx].add(i);
+		}
+			
+		int q = in.nextInt();
+		while(q-- > 0) {
+			char[] ss = in.nextString().toCharArray();
+			int indx = -1;
+			boolean fn = true;
+			int strt = 0;
+			for(int i = 0;  i < ss.length; i++) {
+				int id = ss[i] >= 97 ? ((ss[i]-97) + 26) : (ss[i] - 65);
+				int si = search(l[id], indx);
+				if(si >= l[id].size()) {
+					fn = false;
+					break;
+				}
+				indx = l[id].get(si);
+				if(i == 0){
+					strt = indx;
+				}
+			}
+			if(!fn){
+				out.println("Not matched");
+			}else{
+				out.println("Matched " + strt + " " + indx);
+			}
+		}
 		
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static int search(List<Integer> lst, int v) {
+		if(lst.size() == 0)
+			return 0;
+		int l = 0,
+			h = lst.size()-1,
+			r = lst.size();
+		while(l <= h) {
+			int m = l + (h-l)/2;
+			int lv = lst.get(m);
+			if(lv > v){
+				r = m;
+				h = m -1;
+			}else {
+				l = m+1;
+			}
+		}
+
+		return r;
 	}
 
 	static int min(Integer... numbers) {

@@ -1,11 +1,41 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class RangeMininmumQuery {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int n = in.nextInt();
+		int a[]  = new int[n];
+		int len = log(n, 2);
+		int m[][] = new int[n][len+1];
+		for(int i = 0; i < n; i++) {
+			a[i] = in.nextInt();
+			m[i][0] = i;
+		}
+
+		for(int j = 1; (1<<j) <= n; j++) {
+			for(int i = 0; (i + (1<<j) - 1) < n; i++) {
+				if(a[m[i][j-1]] <= a[m[i+(1<< (j-1))][j-1]]) {
+					m[i][j] = m[i][j-1];
+				} else {
+					m[i][j] = m[i+(1<< (j-1))][j-1];
+				}
+			}
+		}
+
+		while(true) {
+			int i = in.nextInt();
+			if(i < 0)
+				break;
+			int j = in.nextInt();
+			int k = log(j-i+1, 2);
+			if(i == j) {
+				out.println(a[i]);
+				continue;
+			}
+			out.println(Math.min(a[m[i][k]], a[m[j - (1<<k) + 1][k]]));
+		}
 		
 		out.flush();
 		out.close();

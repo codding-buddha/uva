@@ -1,18 +1,54 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Trip {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = 0;
+		while(true) {
+			int n = in.nextInt();
+			if(n == 0)
+				break;
+			int[] a = new int[n];
+			for(int i = 0; i < n; i++)
+				a[i] = in.nextInt();
+			Arrays.sort(a);
+			int max = 0;
+			int[] lookup = new int[10001];
+			for(int i = 0; i < a.length; i++) {
+				int c = ++lookup[a[i]];
+				if(c > max)
+					max = c;
+			}
+
+			List<Integer>[] lst = (ArrayList<Integer>[])new ArrayList[max];
+			for(int i = 0; i < max; i++) {
+				lst[i] = new ArrayList<Integer>();
+			}
+			int p = 0;
+			lst[p].add(a[0]);
+			for(int i = 1; i < a.length; i++) {
+				p+=1;
+				if(p == max)
+					p = 0;
+				lst[p].add(a[i]);
+			}
+			if(tc > 0) {
+				out.println();
+			}
+			out.println(max);
+			for(int i = 0; i < max; i++) {
+				for(int j = 0; j < lst[i].size(); j++) {
+					out.print( (j > 0 ? " " : "") + lst[i].get(j));
+				}
+				out.println();
+			}
+			tc++;
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {
@@ -51,6 +87,7 @@ class Main {
 				break;
 			}
 		}
+
 
 		for(int i = first + 1, j = items.length - 1; i <= j; i++, j--) {
 			swap(items, i, j);

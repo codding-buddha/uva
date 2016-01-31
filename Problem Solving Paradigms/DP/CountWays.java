@@ -1,11 +1,37 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class CountWays {
+	static int[] v = new int[] {1, 5, 10, 25, 50};
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int n = 30000;
+		long[][] lookup = new long[v.length+1][n+1];
+		for(int i = v.length - 1; i >= 0; i--) {
+			lookup[i][0] = 1;
+			for(int j = 1; j <= n; j++) {
+				if(v[i] <= n) {
+					lookup[i][j] = lookup[i+1][j] + (j-v[i] < 0 ? 0 : lookup[i][j-v[i]]);
+				}
+			}
+		}
+		try {
+			while(true) {
+				n = in.nextInt();
+				long ways = lookup[0][n];
+				String result;
+				if(ways > 1) {
+					result = String.format("There are %d ways to produce %d cents change.", ways, n);
+				} else {
+					result = String.format("There is only 1 way to produce %d cents change.", n);
+				}
+
+				out.println(result);
+			}
+		} catch(InputMismatchException e) {
+
+		}
 		
 		out.flush();
 		out.close();

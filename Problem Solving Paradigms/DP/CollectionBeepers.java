@@ -1,14 +1,63 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class CollectionBeepers {
+	static Point[] points;
+	static int[][] lookup;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int r1 = in.nextInt();
+			int r2 = in.nextInt();
+			Point sp = new Point(in.nextInt(), in.nextInt());
+			int n = in.nextInt();
+			points = new Point[n+1];
+			points[0] = sp;
+			for(int i = 1; i < points.length; i++)
+				points[i] = new Point(in.nextInt(), in.nextInt());
+
+			lookup = new int[points.length+1][(1<<(points.length+1))];
+			out.println(String.format("The shortest path has length %d", tsp(0, 1)));
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static class Point
+	{
+		public int x;
+		public int y;
+
+		public Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public int distance(Point p) {
+			return Math.abs(this.x - p.x) + Math.abs(this.y - p.y);
+		}
+	}
+
+	static int tsp(int i, int mask) {
+		if(mask == (1<<(points.length))-1){
+			lookup[i][mask] = points[i].distance(points[0]);
+			return lookup[i][mask];
+		}
+
+		if(lookup[i][mask] != 0)
+			return lookup[i][mask];
+
+		lookup[i][mask] = Integer.MAX_VALUE;
+		for(int k = 0; k < points.length; k++) {
+			if(i != k && (mask&(1<<k)) == 0) {
+				lookup[i][mask] = Math.min(lookup[i][mask], points[i].distance(points[k]) + tsp(k, mask|(1<<k)));
+			}
+		}
+
+		return lookup[i][mask];
 	}
 
 	static int log(int x, int base) {

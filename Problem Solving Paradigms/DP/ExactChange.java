@@ -1,11 +1,48 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class ExactChange {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int s = in.nextInt();
+			int n = in.nextInt();
+			int[] v = new int[n];
+
+			for(int i = 0; i < n; i++) {
+				v[i] = in.nextInt();
+			}
+
+			int MAX = 20005;
+
+			int[] dp = new int[MAX+1];
+			for(int j = 0; j < dp.length; j++) {
+				dp[j] = Integer.MAX_VALUE;
+			}
+
+			dp[0] = 0;
+
+			for(int i = 0; i < n; i++) {
+				for(int j = MAX; j >= v[i]; j--) {
+					if(dp[j-v[i]] != Integer.MAX_VALUE)
+						dp[j] = Math.min(1 + dp[j-v[i]], dp[j]);
+				}
+			}
+
+			int ans = Integer.MAX_VALUE;
+			int minS = Integer.MAX_VALUE;
+			for(int j = s; j <= MAX; j++) {
+				if(dp[j] != Integer.MAX_VALUE){
+					ans = dp[j];
+					minS = j;
+					break;
+				}
+			}
+
+			out.println(minS + " " + ans);
+		}
 		
 		out.flush();
 		out.close();

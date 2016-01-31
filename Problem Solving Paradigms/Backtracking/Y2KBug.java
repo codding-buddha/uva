@@ -1,18 +1,56 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Y2KBug {
+	static long maxSum = -1;
+	static int s = 0;
+	static int d = 0;
+	static int[] a;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		try {
+			while(true) {
+				maxSum = -1;
+				s = in.nextInt();
+				d = in.nextInt()*-1;
+				a = new int[13];
+				find(0, 0L);
+				out.println(maxSum == -1 ? "Deficit" : maxSum);
+			}
+		}catch(Exception e) {
+
+		}
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static void find(int indx, long sum) {
+
+		if(indx == 12){
+			long ls5 = a[indx-4] + a[indx-3] + a[indx-2] + a[indx-1] + a[indx];
+			if(ls5 < 0) {
+				if(sum > maxSum)
+					maxSum = sum;
+			}
+			return;
+		}
+
+		if(indx >= 5){
+			long ls5 = a[indx-4] + a[indx-3] + a[indx-2] + a[indx-1] + a[indx];
+			if(ls5 < 0) {
+				a[indx+1] = s;
+				find(indx+1, sum + s);
+				a[indx+1] = d;
+				find(indx+1, sum + d);
+			}
+		}else {
+			a[indx+1] = s;
+			find(indx+1, sum + s);
+			a[indx+1] = d;
+			find(indx+1, sum + d);
+		}
+		
 	}
 
 	static int min(Integer... numbers) {

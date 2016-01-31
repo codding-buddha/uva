@@ -1,12 +1,33 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class NWays {
+	static 	int[][] dp = new int[110][110];
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		for(int i = 0; i <= 101; i++)
+			dp[1][i] = 1;
+
+		for(int j = 2; j <=101; j++) {
+			for(int i = 0; i <=101; i++) {
+				if(i == 0)
+					dp[j][i] = dp[j-1][i];
+				else{
+					long v = (dp[j-1][i] + dp[j][i-1]) % 1000000;
+					dp[j][i] = (int)v;
+				}
+			}
+		}
+
+		while(true) {
+			int n = in.nextInt();
+			int k = in.nextInt();
+			if(n == 0 || k == 0)
+				break;
+			out.println(dp[k][n]);
+		}
+
 		out.flush();
 		out.close();
 	}

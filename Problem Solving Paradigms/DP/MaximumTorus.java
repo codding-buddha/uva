@@ -1,11 +1,59 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class MaximumTorus {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+
+		while(tc-- > 0) {
+			int n = in.nextInt();
+			int[][] a = new int[n<<1][n<<1];
+			for(int i = 0; i < 2*n; i++) {
+				for(int j = 0 ; j < 2*n; j++) {
+					if(i < n && j < n) {
+						a[i][j] = in.nextInt();
+						a[i][j+n] = a[i][j];
+						a[i+n][j] = a[i][j];
+						a[i+n][j+n] = a[i][j];
+					}
+
+					if(i > 0)
+						a[i][j] += a[i-1][j];
+					if(j > 0)
+						a[i][j] += a[i][j-1];
+					if(i > 0 && j > 0)
+						a[i][j] -= a[i-1][j-1];
+					// System.out.print(a[i][j] + " ");
+				}
+				// System.out.println();
+			}
+			
+			int mx = Integer.MIN_VALUE;
+			for(int i = 0; i < n; i++) {
+				for(int j = i; (j-i) < n; j++) {
+					for(int k = 0; k < n; k++) {
+						for(int l = k; l-k < n; l++) {
+							int sum = a[j][l];
+							if(i > 0){
+								sum -= a[i-1][l];
+							}
+
+							if(k > 0)
+								sum -= a[j][k-1];
+
+							if(i > 0 && k > 0)
+								sum += a[i-1][k-1];
+
+							mx = Math.max(mx, sum);
+						}
+					}
+				}
+			}
+
+			out.println(mx);
+		}
 		
 		out.flush();
 		out.close();

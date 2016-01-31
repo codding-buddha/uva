@@ -1,11 +1,50 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class GarbageHeap {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		int cs = 0;
+		while(tc-- > 0) {
+			int a = in.nextInt(), b = in.nextInt(),  c= in.nextInt();
+			long[][][] v = new long[a][b][c];
+			long mx = Long.MIN_VALUE;
+			for(int i = 0; i < a; i++) {
+				for(int j = 0; j < b; j++) {
+					for(int k = 0; k < c; k++) {
+						v[i][j][k] = in.nextLong();
+						mx = Math.max(mx, v[i][j][k]);
+						if(i > 0)
+							v[i][j][k] += v[i-1][j][k];
+					}
+				}
+			}
+			for(int p = 0; p < a; p++) {
+				for(int q = p; q < a; q++) {
+					for(int i = 0; i < b; i++) {
+						long[] sum = new long[c];
+						for(int j = i; j < b; j++) {
+							long temp = 0;
+							for(int k = 0; k < c; k++) {
+								sum[k] += v[q][j][k];
+								if(p > 0)
+									sum[k] -= v[p-1][j][k];
+								temp+= sum[k];
+								mx = Math.max(mx, temp);
+								if(temp < 0)
+									temp = 0;
+							}
+						}
+					}
+				}
+			}
+			if(cs > 0)
+				out.println();
+			out.println(mx);
+			cs++;
+		}
 		
 		out.flush();
 		out.close();

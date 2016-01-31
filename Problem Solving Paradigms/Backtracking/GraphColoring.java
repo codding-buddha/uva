@@ -1,18 +1,76 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class GraphColoring {
+	static List<Integer>[] graph;
+	static int[] colored;
+	static int n;
+	static int k;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			n = in.nextInt();
+			k = in.nextInt();
+			graph = (ArrayList<Integer>[])new ArrayList[n+1];
+			for(int i = 1; i <= n; i++) {
+				graph[i] = new ArrayList<Integer>();
+			}
+
+			colored = new int[n+1];
+			for(int i = 0; i < k; i++) {
+				int a = in.nextInt();
+				int b = in.nextInt();
+				graph[a].add(b);
+				graph[b].add(a);
+			}
+
+			List<Integer> solution = new ArrayList<Integer>();
+			List<Integer> solutionSoFar = new ArrayList<Integer>();
+			find(solution, solutionSoFar);
+			out.println(solution.size());
+			for(int i = 0; i < solution.size(); i++) {
+				out.print(i > 0 ? " " + solution.get(i) : solution.get(i));
+			}
+			out.println();
+		}
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static void find(List<Integer> solution, List<Integer> solutionSoFar) {
+		boolean allColored = true;
+		for(int i = 1; i <= n; i++) {
+			if(colored[i] == 0) {
+				allColored = false;
+				colored[i] = 1;
+				solutionSoFar.add(i);
+				List<Integer> whiteColored = new ArrayList<Integer>();
+				List<Integer> node = graph[i];
+				for(int j = 0, len = node.size(); j < len; j++) {
+					if(colored[node.get(j)] == 0) {
+						colored[node.get(j)] = 2;
+						whiteColored.add(node.get(j));
+					}
+				}
+				find(solution, solutionSoFar);
+				for(int j = 0, len = whiteColored.size(); j < len; j++) {
+					colored[whiteColored.get(j)] = 0;
+				}
+				colored[i] = 0;
+				solutionSoFar.remove(solutionSoFar.size()-1);
+			}
+		}
+
+		if(allColored) {
+			if(solutionSoFar.size() > solution.size()) {
+				solution.clear();
+				for(int i = 0; i < solutionSoFar.size(); i++)
+					solution.add(solutionSoFar.get(i));
+			}
+		}
 	}
 
 	static int min(Integer... numbers) {

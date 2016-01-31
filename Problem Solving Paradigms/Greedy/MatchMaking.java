@@ -1,18 +1,37 @@
+//MatchMaking
 import java.io.*;
 import java.util.*;
 
-class Main {
+class MatchMaking {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = 1;
+		while(true) {
+			int b = in.nextInt();
+			int s = in.nextInt();
+			if(b == 0 && s == 0)
+				break;
+			//int[] ba = new int[b];
+			//int[] sa = new int[sa];
+			int l = Integer.MAX_VALUE;
+			for(int i = 0; i < b; i++) {
+				int v = in.nextInt();
+				if(l > v)
+					l = v;
+			}
+
+			for(int i = 0; i < s; i++)
+				in.nextInt();
+			if(b<= s) {
+				out.println(String.format("Case %d: %d", tc++, 0, String.valueOf(l)));	
+			}else {
+				out.println(String.format("Case %d: %d %s", tc++, b-s, String.valueOf(l)));
+			}
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

@@ -1,18 +1,61 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
-	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
+class CD {
+	static long max = 0;
+	static long mine = 0;
+	static int n;
+	static int t;
+	static long o;
+	public static void main(String[] args) throws Exception {
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		InputReader in = new InputReader(System.in);
+		try{
+			while(true) {
+				n = in.nextInt();
+				t = in.nextInt();
+				max = Integer.MIN_VALUE;
+				mine = Integer.MAX_VALUE;
+				o = 0;
+				int[] a = new int[t];
+				for(int i = 0; i < t; i++){
+					a[i] = in.nextInt();
+					if(a[i] < mine){
+						mine = a[i];
+					}
+				}
+				select(0, a, 0L, 0L);
+				for(int i = 0; i < t; i++) {
+					if((o&(1<<i)) > 0){
+						// sb.append(a[i]).append(" ");
+						out.print(a[i] + " ");
+					}
+				}
+				// sb.append("sum:").append(max).append("\n");
+				out.println("sum:"+max);
+			}
+
+		}catch(Exception e) {
+
+		}
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static void select(int i, int[] a, long s, long selected) {
+		if(s > n)
+			return;
+
+		if(s > max){
+			max = s;
+			o = selected;
+		}
+
+		for(int k = i; k < a.length; k++) {
+			if((s+a[k]) <= n && (selected&(1<<k)) == 0){
+				select(k+1, a, s+a[k], selected|(1<<k));
+			}
+		}
 	}
 
 	static int min(Integer... numbers) {

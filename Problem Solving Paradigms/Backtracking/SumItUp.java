@@ -1,18 +1,98 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
-	public static void main(String[] args) {
+class SumItUp {
+	static int[] a;
+	static int sum;
+	static BitSet used;
+	static OutputWriter out;
+	static HashSet<String> lookup;
+	public static void main(String[] args) throws Exception {
 		InputReader in = new InputReader(System.in);
-		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		out = new OutputWriter(System.out);
+		// out = new OutputWriter(new FileOutputStream("output.txt"));
+		while(true) {
+			sum = in.nextInt();
+			int n = in.nextInt();
+
+			if(sum == 0 && n == 0)
+				break;
+
+			used = new BitSet(n);
+			a = new int[n];
+			lookup = new HashSet<String>();
+			for(int i = 0; i < n; i++) {
+				a[i] = in.nextInt();
+			}
+			Arrays.sort(a);
+
+			for(int i = 0, j = a.length-1; i <j; i++, j--) {
+				int temp = a[i];
+				a[i] = a[j];
+				a[j] = temp;
+			}
+
+			out.println("Sums of " + sum + ":");
+			for(int i = 0; i < n; i++) {
+				used.set(i, true);
+				findSum(i, a[i]);
+				used.set(i, false);	
+			}
+
+			if(lookup.size() == 0) {
+				out.println("NONE");
+			}
+		}
 		out.flush();
 		out.close();
+
+		// Scanner f1 = new Scanner(new File("actual.txt"));
+		// Scanner f2 = new Scanner(new File("output.txt"));
+
+		// int ln = 1;
+		// while(f1.hasNextLine()) {
+		// 	String l1 =  f1.nextLine();
+		// 	String l2 = f2.nextLine();
+		// 	//System.out.println(l1);
+		// 	// System.out.println(l2);
+		// 	if(!l1.equals(l2)) {
+		// 		System.out.println("Line Number " + ln);
+		// 		System.out.println("Diff : " + l1 + " -> " + l2);
+		// 		break;
+		// 	}
+		// 	ln++;
+		// }
+
+		// f1.close();
+		// f2.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static void findSum(int indx, int s) {
+		if(s == sum) {
+			boolean first = true;
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < a.length; i++) {
+				if(used.get(i)){
+					sb.append(first ? a[i] : "+" + a[i]);
+					first = false;
+				}
+			}
+			String r = sb.toString();
+			if(!lookup.contains(r)){
+				out.println(r);
+				lookup.add(r);
+			}
+			return;
+		}
+
+		if(s > sum)
+			return;
+		for(int i = indx+1; i < a.length; i++){
+			used.set(i, true);
+			findSum(i, s+a[i]);
+			used.set(i, false);
+		}
+
 	}
 
 	static int min(Integer... numbers) {

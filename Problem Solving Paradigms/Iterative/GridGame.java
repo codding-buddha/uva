@@ -1,18 +1,36 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class GridGame {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int m = in.nextInt();
+			int[][] g = new int[m][m];
+			for(int i = 0; i < m; i++) {
+				for(int j = 0; j < m; j++) {
+					g[i][j] = in.nextInt();
+				}
+			}
+			int min = Integer.MAX_VALUE;
+			Integer[] p1 = new Integer[m];
+			for(int i = 0; i < p1.length; i++)
+				p1[i] = i;
+			do {
+					int s = 0;
+					for(int k = 0; k < m; k++)
+						s += g[k][p1[k]];
+					if(s < min)
+						min = s;
+				}while(nextPermutation(p1) != null);
+
+			out.println(min);
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

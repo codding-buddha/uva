@@ -1,18 +1,36 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class CoinCollector {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int n = in.nextInt();
+			int[] a = new int[n];
+			for(int i = 0; i < n; i++) {
+				a[i] = in.nextInt();
+			}
+
+			int c = 2;
+			// Arrays.sort(a);
+			int max = a[a.length-1];
+			long s = a[0];
+			for(int i = 1; i < a.length-1; i++) {
+				if(s+a[i] < a[i+1]) {
+					s+=a[i];
+					c++;
+				}
+			}
+			if(a.length == 1)
+				c = 1;
+
+			out.println(c);
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

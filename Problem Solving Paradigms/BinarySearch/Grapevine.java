@@ -1,20 +1,79 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Grapevine {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		while(true) {
+			int n = in.nextInt();
+			int m = in.nextInt();
+			if(n == 0 || m == 0)
+				break;
+
+			int[][] a = new int[n][m];
+			
+
+			for(int i = 0; i < n; i++) {
+				for(int j = 0; j < m; j++)
+					a[i][j] = in.nextInt();
+			}
+
+			int q = in.nextInt();
+			while(q-- > 0) {
+				int l = in.nextInt();
+				int u = in.nextInt();
+				int max = 0;
+				for(int i = 0; i < n; i++) {
+					int indx = lowerBound(a[i], l);
+
+					if(indx == m)
+						continue;
+
+					if(a[i][indx] > u)
+						continue;
+
+					if(max < 1)
+						max = 1;
+
+					int k = max;
+					while((k+i) < n && (k+indx) < m) {
+						int ni = indx + k;
+						if(a[i+k][ni] <= u) {
+							if((k+1) > max)
+								max = k+1;
+							k++;
+						} else {
+							break;
+						}
+					}
+				}
+				out.println(max);
+			}
+			out.println("-");
+		}
 		
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
-	}
+	static int lowerBound(int[] a, int v) {
+		int l = 0; 
+		int h = a.length-1;
+		int r = a.length;
+		while(l <= h) {
+			int m = l + (h-l)/2;
+			if(a[m] >= v) {
+				r = m;
+				h = m-1;
+			}else {
+				l = m+1;
+			}
+		}
 
+		return r;
+	}
 	static int min(Integer... numbers) {
 		int min = numbers[0];
 		for(int i = 1; i < numbers.length; i++) {

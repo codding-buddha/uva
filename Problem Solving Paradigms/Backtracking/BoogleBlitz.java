@@ -1,18 +1,94 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BoogleBlitz {
+	static Set<String> lookup;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			lookup = new TreeSet<String>(new Comparator<String>() {
+				@Override
+				public int compare(String s1, String s2) {
+					if(s1.length() != s2.length())
+						return s1.length() - s2.length();
+					return s1.compareTo(s2);
+				}
+			});
+			int n = in.nextInt();
+			char[][] table = new char[n][n];
+			for(int i = 0; i < n; i++) {
+				String s = in.nextString();
+				for(int j = 0; j < s.length(); j++)
+					table[i][j] = s.charAt(j);
+			}
+
+			for(int i = 0; i < n; i++) {
+				for(int j = 0; j < n; j++) {
+					findWords(table, "", i, j);
+				}
+			}
+			
+			//findWords(table, "", n-1, n-1);
+
+			for(String word: lookup) {
+				out.println(word);
+			}
+			
+			if(tc > 0)
+				out.println();
+		}
+
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static void findWords(char[][] table, String word, int r, int c) {
+		word = word + table[r][c];
+		if(word.length() >= 3 && !lookup.contains(word)){
+			lookup.add(word);
+		}
+
+		//if(r < 0 || c < 0 || r >= table.length || c >= table.length)
+		//	return;
+
+		//if(word.equals("") || word.charAt(word.length() - 1) < table[r][c]) {
+			// System.out.println("------------------------------------------------------------------");
+			// System.out.println("WORD : " + word);
+			// if(r-1 >= 0) {
+			// 	System.out.println(String.format("%c%c%c", c-1>= 0 ? table[r-1][c-1] : '\0', table[r-1][c], c+1 < table.length ? table[r-1][c+1] : '\0'));
+			// }
+
+			// System.out.println(String.format("%c%c%c",  c-1>= 0 ? table[r][c-1] : '\0', table[r][c], c+1 < table.length ? table[r][c+1] : '\0'));
+
+			// if(r+1 < table.length) {
+			// 	System.out.println(String.format("%c%c%c",  c-1>= 0 ? table[r+1][c-1] : '\0', table[r+1][c], c+1 < table.length ? table[r+1][c+1] : '\0'));
+			// }
+			// System.out.println("------------------------------------------------------------------");
+
+			if(r-1 >= 0){
+				if(c-1 >= 0 && table[r][c] < table[r-1][c-1]) 
+					findWords(table, word, r-1, c-1);
+				if(c+1 < table.length && table[r][c] < table[r-1][c+1])
+					findWords(table, word, r-1, c+1);
+				if(table[r][c] < table[r-1][c])
+					findWords(table, word, r-1, c);
+			}
+			if(r+1 < table.length) {
+				if(c-1 >= 0 && table[r][c] < table[r+1][c-1]) 
+					findWords(table, word, r+1, c-1);
+				if(c+1 < table.length && table[r][c] < table[r+1][c+1])
+					findWords(table, word, r+1, c+1);
+				if(table[r][c] < table[r+1][c])
+					findWords(table, word, r+1, c);
+			}
+			if(c-1 >= 0 && table[r][c] < table[r][c-1]) 
+				findWords(table, word, r, c-1);
+
+			if(c+1 < table.length && table[r][c] < table[r][c+1])
+				findWords(table, word, r, c+1);
+		//}
 	}
 
 	static int min(Integer... numbers) {

@@ -1,18 +1,35 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class MaximumSum {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			int n = in.nextInt();
+			if(n == 0)
+				break;
+
+			char[] output = new char[n];
+			boolean first = true;
+			StringBuilder sb = new StringBuilder();
+			for(int i = 0; i < n; i++) {
+				int v = in.nextInt();
+				if(v != 0) {
+					if(!first)
+						sb.append(" ");
+					sb.append(v);
+					first = false;
+				}
+			}
+			if(first)
+				sb.append(0);
+			
+			out.println(sb.toString());
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

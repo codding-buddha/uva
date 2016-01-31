@@ -1,18 +1,51 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class SolveIt {
+	static int p, q, r, s, t, u;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		double epsilon = 0.00001;
+		try {
+			while(true) {
+				p = in.nextInt();
+				q = in.nextInt();
+				r = in.nextInt();
+				s = in.nextInt();
+				t = in.nextInt();
+				u = in.nextInt();
+
+				if(solve(0.0)*solve(1.0) > 0)
+					out.println("No solution");
+				else
+					out.println(String.format("%.4f", bisect()));
+			}
+		}catch(InputMismatchException e) {
+
+		}		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static double bisect() {
+		double l = 0.0;
+		double h = 1.0;
+		while((h-l) > (0.00000001)) {
+			double m = (l+h)/2;
+			double v = solve(m);
+			if(solve(l)*v <= 0) {
+				h = m;
+			}else {
+				l =m;
+			}
+		}
+
+		return (l+h)/2;
+	}
+
+	static double solve(double x) {
+		return p*Math.exp(-x) + q*Math.sin(x) + r*Math.cos(x) + s*Math.tan(x) + t*x*x + u;
 	}
 
 	static int min(Integer... numbers) {

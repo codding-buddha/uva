@@ -1,14 +1,64 @@
+//DivisibleGroupSums
 import java.io.*;
 import java.util.*;
 
-class Main {
+class DivisibleGroupSums {
+	static int[][][] lookup;
+	static int[] a;
+	static int d;
+	static int m;
+	static int n;
+	static int q;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int cs = 1;
+		while(true) {
+			n = in.nextInt();
+			q = in.nextInt();
+			if(n == 0 && q == 0)
+				break;
+			lookup = new int[n+1][21][11];
+			a = new int[n];
+			for(int i = 0; i < n; i++) {
+				a[i] = in.nextInt();
+			}
+			out.println(String.format("SET %d:", cs++));
+			for(int i = 0; i < q; i++) {
+				d = in.nextInt();
+				m = in.nextInt();
+				init();
+				out.println(String.format("QUERY %d: %d", i+1, solve(0, 0, m)));
+			}
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static void init() {
+		for(int i = 0; i < n+1; i++) {
+			for(int j = 0; j < 21; j++) {
+				for(int k = 0; k < 11; k++)
+					lookup[i][j][k] = -1;
+			}
+		}
+	}
+
+	static int solve(int i, int s, int k) {		
+		if(lookup[i][s][k] != -1)
+			return lookup[i][s][k];
+
+		if(k == 0){
+			lookup[i][s][k] = s == 0 ? 1 : 0;
+			return lookup[i][s][k];
+		}
+
+		if(i == a.length)
+			return 0;
+		
+		lookup[i][s][k] = solve(i+1, s, k) + solve(i+1, (((s+a[i])%d)+d)%d, k-1);
+		return lookup[i][s][k];
 	}
 
 	static int log(int x, int base) {

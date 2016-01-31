@@ -1,18 +1,41 @@
+//BitMask
 import java.io.*;
 import java.util.*;
 
-class Main {
+class BitMask {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		try {
+			while(true) {
+				long n = in.nextLong();
+				long l = in.nextLong();
+				long u = in.nextLong();
+				long result = 0;
+				for(int i = 0; i <= 32; i++) {
+					long s = (1L<< (32-i))&n;
+					long temp = 0;
+					if(s > 0) {
+						temp = s-1;
+						temp |= result;
+						if(temp < l) {
+							result |= s;
+						}
+					}else {
+						temp = (1L<<(32-i)) | result;
+						if(temp <= u) {
+							result = temp;
+						}
+					}
+				}
+
+				out.println(result);
+			}
+		}catch(Exception e) {
+
+		}
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

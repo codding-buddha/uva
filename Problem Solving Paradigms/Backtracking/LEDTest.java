@@ -1,18 +1,56 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class LEDTest {
+	//static int[] di = {123, 127, 112, 95, 91, 51, 121, 109, 48, 126};
+	static int[] di = {126, 48, 109, 121, 51, 91, 95, 112, 127, 123};
+	static int[] seq;
+	static boolean solved;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		while(true) {
+			int n = in.nextInt();
+			if(n == 0)
+				break;
+			solved = false;
+			seq = new int[n];
+			for(int i = 0; i < n; i++) {
+				String s = in.nextString();
+				int sn = 0;
+				for(int j =0, len = s.length(); j < len; j++) {
+					sn = sn << 1;
+					sn += s.charAt(j) == 'Y' ? 1 : 0;
+				}
+				seq[i] = sn;
+			}
+//			out.println("Sequences");
+//			for(int i = 0; i < seq.length; i++) {
+//				out.println(seq[i]);
+//			}
+//			out.println();
+			for(int i = 9; i >= n-1 && !solved; i--)
+				solve(i, 0, 0);
+
+			out.println(solved ? "MATCH" : "MISMATCH");
+		}
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static void solve(int i, int j, int burned) {
+		if(j == seq.length){
+			solved = true;
+			return;
+		}else {
+			if((burned&seq[j]) == 0) {
+				if(((di[i]^seq[j])&seq[j]) == 0) {
+					// System.out.println("Index " + i);
+					solve(i-1, j+1, burned | (di[i]^seq[j]));
+				}
+			}
+		}
 	}
 
 	static int min(Integer... numbers) {

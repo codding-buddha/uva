@@ -1,18 +1,40 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class DynamicFrog {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		int cs = 1;
+		while(tc-- > 0 ){
+			List<Integer> stones = new ArrayList<Integer>();
+			stones.add(0);
+			stones.add(0);
+			List<Integer> smallStones = new ArrayList<Integer>();
+			int n = in.nextInt();
+			int d = in.nextInt();
+			for(int i = 0; i < n; i++) {
+				String des = in.nextString();
+				int val = Integer.parseInt(des.substring(2));
+				if(des.charAt(0) == 'B') {
+					stones.add(val);
+				}
+				stones.add(val);
+			}
+
+			stones.add(d);
+			stones.add(d);
+			int minDistance = -1;
+			for(int i = 2; i < stones.size(); i++) {
+				minDistance = Math.max(stones.get(i) - stones.get(i-2), minDistance);
+			}
+
+			out.println(String.format("Case %d: %d", cs++, minDistance));
+		}
 		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

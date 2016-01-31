@@ -1,18 +1,81 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
-	public static void main(String[] args) {
+class PrimeRing {
+	static BitSet bt;
+	static OutputWriter out;
+	static int n;
+	public static void main(String[] args) throws Exception {
 		InputReader in = new InputReader(System.in);
-		OutputWriter out = new OutputWriter(System.out);
-		
+		out = new OutputWriter(System.out);
+		// out = new OutputWriter(new FileOutputStream("output.txt"));
+		try {
+			int cs = 1;
+			while(true) {
+				n = in.nextInt();
+				if(cs > 1){
+					out.println();
+				}
+				out.println("Case "+ cs++ + ":");
+				bt = new BitSet(n+1);
+				// 	out.println("Size " + bt.size());
+				bt.set(1, true);
+				ring(1, "1");
+			}
+		}catch(Exception e) {
+
+		}
 		
 		out.flush();
 		out.close();
+		// Scanner f1 = new Scanner(new File("actual.txt"));
+		// Scanner f2 = new Scanner(new File("output.txt"));
+
+		// int ln = 1;
+		// while(f1.hasNextLine()) {
+		// 	String l1 =  f1.nextLine();
+		// 	String l2 = f2.nextLine();
+		// 	//System.out.println(l1);
+		// 	// System.out.println(l2);
+		// 	if(!l1.equals(l2)) {
+		// 		System.out.println("Line Number " + ln);
+		// 		System.out.println("Diff : " + l1 + " -> " + l2);
+		// 		break;
+		// 	}
+		// 	ln++;
+		// }
+
+		// f1.close();
+		// f2.close();
+
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
+	static void ring(int num, String result) {
+		if(num > n) {
+			return;
+		}
+		// out.println(bt.cardinality());
+		if(bt.cardinality() == n && (n > 1 ? isPrime(num+1) : true)){
+			out.println(result);
+			return;
+		}
+
+		for(int i = 2; i <= n; i++) {
+			if(!bt.get(i) && isPrime(num+i)) {
+				bt.set(i, true);
+				ring(i, result + " " + i);
+				bt.set(i, false);
+			}
+		}
+
+	}
+
+	static boolean isPrime(int n) {
+		for(int i = 2, len = (int)Math.sqrt(n) + 1; i <= len; i++) {
+			if(n % i == 0)
+				return false;
+		}
+		return true;
 	}
 
 	static int min(Integer... numbers) {

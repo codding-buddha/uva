@@ -1,15 +1,136 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class FerryLoading {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			int L = in.nextInt()*100;
+			int v = 0;
+			boolean[][] lookup = new boolean[205][L+5];
+			int[][] selection = new int[205][L+5];
+			int[] a = new int[205];
+			int[] sum = new int[205];
+			int indx = 1;
+			int  n = 1;
+			while((v= in.nextInt()) != 0){
+				sum[indx] = v;
+				sum[indx] += indx > 0 ? sum[indx-1] : 0;
+				if(sum[indx] > 2*L){
+					indx++;
+					continue;
+				}
+
+				indx++;
+				a[n++] = v;
+			}
+
+			int len = 0;
+			int laslen = 0;
+			lookup[0][0] = true;
+
+			for(int i = 1; i < n; i++) {
+				boolean canload = false;
+				for(int l = 0; l <= L; l++) {
+					if(!lookup[i-1][l])
+						continue;
+
+					if(l+a[i] <= L) {
+						canload = true;
+						len = i;
+						lookup[i][l+a[i]] = true;
+						selection[i][l+a[i]] = 1;
+						laslen = l+a[i];
+					}
+
+					if((sum[i-1] - l) + a[i] <= L) {
+						canload = true;
+						len = i;
+						lookup[i][l] = true;
+						selection[i][l] = 2;
+						laslen = l;
+					}
+				}
+
+				if(!canload)
+					break;
+			}
+
+			out.println(len);
+			String[] answers = new String[len];
+			indx = len-1;
+			for(int i= len; i >= 0; i--) {
+				if(selection[i][laslen] == 1) {
+					laslen = laslen - a[i];
+					answers[indx--] = "port";
+				}else if(selection[i][laslen] == 2){
+					 answers[indx--] =  "starboard";
+				}
+			}
+
+			for(int i = 0; i < answers.length; i++)
+				out.println(answers[i]);
+			if(tc > 0)
+				out.println();
+
+		}	
 		
 		out.flush();
 		out.close();
 	}
+
+	static int[] toArray(List<Integer> lst) {
+		int[] arr = new int[lst.size()+1];
+		for(int i = 1; i < arr.length; i++)
+			arr[i] = lst.get(i-1);
+
+		return arr;
+	}
+
+	// static int load(int c, int l) {
+	// 	if(c >= n)
+	// 		return 0;
+
+	// 	if(lookup[c][l] != 0) {
+	// 		return lookup[c][l] < 0 ? 0 : lookup[c][l];
+	// 	}
+
+	// 	int r = L - (sum[c] - (L-l));
+	// 	if(c == n-1) {
+	// 		if(a[c] <= l) {
+	// 			lookup[c][l] = 1;
+	// 			return 1;
+	// 		} else if(a[c] <= r) {
+	// 			lookup[c][r] = 1;
+	// 			selection[c][l] = 1;
+	// 			return 1;
+	// 		} else {
+	// 			return 0;
+	// 		}
+	// 	}
+
+	// 	int opt1 = 0, opt2 = 0, opt3 = 0;
+	// 	if(a[c] <= l){
+	// 		opt1 = 1 + load(c+1, l-a[c]);
+	// 	}
+	// 	if(a[c] <= r){
+	// 		opt2 = 1 + load(c+1, l);
+	// 	}
+
+	// 	if(opt2 > opt1) {
+	// 		selection[c][l] = 1;
+	// 	}
+
+	// 	lookup[c][l] = Math.max(opt1, opt2);
+
+	// 	if(lookup[c][l] == 0) {
+	// 		lookup[c][l] = -1;
+	// 	}
+
+	// 	return lookup[c][l] < 0 ? 0 : lookup[c][l];
+	// }
 
 	static int log(int x, int base) {
 		return (int)(Math.log(x)/Math.log(base));

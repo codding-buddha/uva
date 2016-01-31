@@ -1,14 +1,74 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class WhatGoesUp {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		List<Long> numbers = new ArrayList<Long>();
+		List<Integer> temp = new ArrayList<Integer>();
+		List<Integer> seq = new ArrayList<Integer>();
+		numbers.add(in.nextLong());
+		temp.add(0);
+		seq.add(-1);
+		int len = 1;
+		try {
+			while(true) {
+				seq.add(-1);
+				long v = in.nextLong();
+				numbers.add(v);
+				int indx = numbers.size() - 1;
+				int lst = temp.get(temp.size() - 1);
+				if(v > numbers.get(lst)) {
+					temp.add(indx);
+					seq.set(indx, lst);
+					len++;
+				} else if(v < numbers.get(temp.get(0))) {
+					temp.set(0, indx);
+				} else if( v != numbers.get(lst)) {
+					int ceilIndex = ceilIndex(temp, numbers, v);
+					temp.set(ceilIndex, indx);
+					if(ceilIndex > 0)
+						seq.set(indx, temp.get(ceilIndex - 1));
+				}
+			}
+		}catch(InputMismatchException e) {
+
+		}
 		
-		
+		out.println(len);
+		out.println("-");
+		long[] seqList = new long[len];
+		int indx = temp.get(temp.size() - 1);
+		int arrIndx = len - 1;
+		while(indx != -1) {
+			seqList[arrIndx--] = numbers.get(indx);
+			indx = seq.get(indx);
+		}
+		for(int i = 0; i < seqList.length; i++) {
+			out.println(seqList[i]);
+		}
+
 		out.flush();
 		out.close();
+	}
+
+	static int ceilIndex(List<Integer> indexes, List<Long> numbers , long v) {
+		int l = 0, h = indexes.size() - 1;
+
+		while(l < h) {
+			int m = l + (h-l)/2;
+			long k = numbers.get(indexes.get(m));
+			if(k == v) {
+				return m;
+			} else if(k > v) {
+				h = m;
+			} else {
+				l = m+1;
+			}
+		}
+
+		return h;
 	}
 
 	static int log(int x, int base) {

@@ -1,20 +1,60 @@
+//OiledBamboo
 import java.io.*;
 import java.util.*;
 
-class Main {
+class OiledBamboo {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		int cs = 1;
+		while(tc-- > 0) {
+			int n = in.nextInt();
+			int[] a = new int[n];
+			int l = Integer.MAX_VALUE;
+			int h = Integer.MIN_VALUE;
+			for(int i = 0; i < n; i++){
+				a[i] = in.nextInt();
+
+				if(l > a[i])
+					l = a[i];
+
+				if(h < a[i])
+					h = a[i];
+			}
+
+			int k = Integer.MAX_VALUE;
+
+			while(l <= h) {
+				int m = l + (h-l)/2;
+				if(assignable(a, m)) {
+					h = m-1;
+					if(k > m)
+						k = m;
+				}else {
+					l = m+1;
+				}
+			}
+
+			out.println(String.format("Case %d: %d", cs++, k));
+		}
 		
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
-	}
+	static boolean assignable(int[] a, int k) {
+		for(int i = 0; i < a.length; i++) {
+			int diff = i > 0 ? (a[i] - a[i-1]): a[i];
 
+			if(diff > k)
+				return false;
+			else if(diff == k)
+				k--;
+		}
+
+		return true;
+	}
 	static int min(Integer... numbers) {
 		int min = numbers[0];
 		for(int i = 1; i < numbers.length; i++) {

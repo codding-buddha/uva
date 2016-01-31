@@ -1,20 +1,127 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Network {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		int cs = 1;
+		while(true) {
+			int n = in.nextInt();
+			int m = in.nextInt();
+			if(n == 0 && m == 0)
+				break;
+			List<PriorityQueue<Pair>> buffer = new ArrayList<PriorityQueue<Pair>>(n+1);
+			int[] expected = new int[n+1];
+			int[] ms = new int[n+1];
+			Integer[] p = new Integer[n];
+			int[] msg = new int[m];
+			int[] s = new int[m];
+			int[] e = new int[m];
+			int result = Integer.MAX_VALUE;
+			for(int i = 0; i < n; i++){
+				ms[i+1] = in.nextInt();
+				p[i] = i+1;
+			}
+
+			int indx = 0;
+			int temp = m;
+			while(temp-- > 0) {
+
+				msg[indx] = in.nextInt();
+				s[indx] = in.nextInt();
+				e[indx] = in.nextInt();
+				indx++;
+			}
+
+			do {
+				indx = 0;
+				int k = 0;
+				buffer.clear();
+				int size = 0;
+				int max = 0;
+				for(int i = 0; i < n; i++){
+					expected[i+1] = 1;
+					buffer.add(new PriorityQueue<Pair>());
+				}
+
+				while(indx < p.length && k < m) {
+					PriorityQueue<Pair> pq = buffer.get(msg[k]-1);
+					if(msg[k] == p[indx]) {
+						if(expected[msg[k]] == s[k]) {
+							expected[msg[k]] = e[k]+1;
+							while(pq.size() > 0 && pq.peek().first == expected[msg[k]]) {
+								Pair pr = pq.poll();
+								size -= (pr.second-pr.first+1);
+								expected[msg[k]] = pr.second+1;
+							}
+						} else {
+							pq.add(new Pair(s[k], e[k]));
+							size += (e[k]-s[k])+1;
+							if(size > max)
+								max = size;
+						}
+						if(expected[msg[k]] >= ms[msg[k]]){
+							indx++;
+							while(true) {
+								if(indx >= p.length)
+									break;
+								if(buffer.get(p[indx]-1).size() < 1){
+									indx++;
+									continue;
+								}
+
+								if(expected[p[indx]] == buffer.get(p[indx]-1).peek().first) {
+									Pair pr = buffer.get(p[indx]-1).poll();
+									size -= (pr.second-pr.first+1);
+									expected[p[indx]] = pr.second + 1;
+									if(expected[p[indx]] >= ms[p[indx]])
+										indx++;
+								} else {
+									break;
+								}
+							}
+						}
+					} else {
+						pq.add(new Pair(s[k], e[k]));
+						size += (e[k]-s[k])+1;
+						if(size > max)
+							max = size;
+					}
+
+					k++;
+			  }
+
+			  if(max < result)
+			  	result = max;
+
+			}while(nextPermutation(p) != null);
+
+			out.println(String.format("Case %d: %d", cs++, result));
+			out.println();
+
+		}
 		out.flush();
 		out.close();
 	}
 
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
-	}
+	static class Pair implements Comparable<Pair>{
+		public int first;
+		public int second;
 
+		public Pair(int f, int s) {
+			first = f;
+			second = s;
+		}
+
+		@Override
+		public int compareTo(Pair p) {
+			if(this.first == p.first)
+				return this.second - p.second;
+			return this.first - p.first;
+		}
+
+	}
 	static int min(Integer... numbers) {
 		int min = numbers[0];
 		for(int i = 1; i < numbers.length; i++) {

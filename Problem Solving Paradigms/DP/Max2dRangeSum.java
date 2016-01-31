@@ -1,18 +1,54 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Max2dRangeSum {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		int n = in.nextInt();
+		int m = in.nextInt();
+		int[][] a = new int[n][m];
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < m; j++) {
+				int v = in.nextInt();
+				a[i][j] = v;
+				if(j > 0)
+					a[i][j] += a[i][j-1];
+				out.print(a[i][j] + " ");
+			}
+			out.println();
+		}
+
+		int max = Integer.MIN_VALUE;
+		int x1 = -1, y1 =-1, x2 = -1, y2 = -1;
+		for(int i = 0; i < n; i++) {
+			int prev = -1;
+			for(int j = i; j < m; j++) {
+				int max_sum = 0;
+				for(int r = 0; r < n; r++) {
+					max_sum += a[r][j] - (i > 0 ? a[r][i-1] : 0);
+					if(prev == -1)
+						prev = r;
+					if(max_sum > max) {
+						x1 = prev;
+						x2 = r;
+						y1 = i;
+						y2 = j;
+						max = max_sum;
+					}
+
+					if(max_sum < 0) {
+						prev = -1;
+						max_sum = 0;
+					}
+				}
+			}
+		}
 		
-		
+		out.println(max);
+		out.println(String.format("(%d, %d) (%d, %d)", x1, y1, x2, y2));
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

@@ -1,18 +1,52 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class DragonOfLoowater {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		while(true) {
+			int n = in.nextInt();
+			int m = in.nextInt();
+			if( n== 0 && m == 0)
+				break;
+
+			int[] d = new int[n];
+			int[] k = new int[m];
+
+			for(int i = 0;  i < n; i++)
+				d[i] = in.nextInt();
+			for(int i = 0; i < m; i++)
+				k[i] = in.nextInt();
+
+			if(m < n) {
+				out.println("Loowater is doomed!");
+			} else {
+				Arrays.sort(d);
+				Arrays.sort(k);
+				int cost = 0, i = 0, j = 0;
+				while(i < n && j < m) {
+					if(d[i] <= k[j]) {
+						cost += k[j];
+						i++;
+						j++;
+					} else {
+						j++;
+						if((m-j) < (n-i))
+							break;
+					}
+				}
+
+				if(i < n) {
+					out.println("Loowater is doomed!");
+				}else {
+					out.println(cost);
+				}
+			}
+			
+		}		
 		out.flush();
 		out.close();
-	}
-
-	static int log(int x, int base) {
-		return (int)(Math.log(x)/Math.log(base));
 	}
 
 	static int min(Integer... numbers) {

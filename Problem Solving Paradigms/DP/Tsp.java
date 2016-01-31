@@ -1,14 +1,43 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Tsp {
+	static int[][] a;
+	static int n;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
-		
+		n = in.nextInt();
+		a = new int[n][n];
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < n; j++) {
+				a[i][j] = in.nextInt();
+			}
+		}
+
+		out.println(tsp(0, 1));		
 		out.flush();
 		out.close();
+	}
+
+	static int tsp(int pos, int mask) {
+		if(mask == (int)Math.pow(2, n) - 1) {
+			return a[pos][0];
+		}
+
+		int min = Integer.MAX_VALUE;
+		for(int i = 0; i < n; i++) {
+			int nxt = i;
+
+			if(nxt != pos && ((mask&(1<<nxt)) == 0)) {
+				int d = a[pos][nxt] + tsp(nxt, mask|(1<<nxt));
+				if(d < min) {
+					min = d;
+				}
+			}
+		}
+
+		return min;
 	}
 
 	static int log(int x, int base) {

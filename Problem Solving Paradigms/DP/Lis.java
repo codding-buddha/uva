@@ -1,14 +1,64 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Lis {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		int n = in.nextInt();
+		int[] a = new int[n];
+		int[] c = new int[n+1];
+		for(int i = 0; i < n; i++) {
+			a[i] = in.nextInt();
+			c[i] = -1;
+		}
+		c[n] = -1;
+
+		List<Integer> maxList = new ArrayList<Integer>();
+
+		maxList.add(0);
+		int len = 0;
+		int maxIndx = 0;
+		for(int i = 1; i < n; i++) {
+			int ls = maxList.get(maxList.size() - 1);
+			if(a[i] > a[ls]) {
+				maxList.add(i);
+				len++;
+				c[i] = ls;
+				maxIndx = i;
+			} else if(a[i] < ls) {
+				int indx = search(maxList,a, a[i]);
+				maxList.set(indx, i);
+				if(indx > 0)
+					c[i] = maxList.get(indx - 1);
+			}
+		}
 		
-		
+		while(true) {
+			out.print(a[maxIndx] + " ");
+			if(c[maxIndx] < 0)
+				break;
+			maxIndx = c[maxIndx];
+		}
+
+		out.println("Length : " + (len+1));
+		out.println();
 		out.flush();
 		out.close();
+	}
+
+	static int search(List<Integer> lst, int[] a, int v) {
+		int l = 0, h = lst.size() - 1;
+		while(l < h) {
+			int m = l + (h-l)/2;
+			if(a[lst.get(m)] < v) {
+				l = m+1;
+			} else {
+				h = m;
+			}
+		}
+
+		return h;
 	}
 
 	static int log(int x, int base) {

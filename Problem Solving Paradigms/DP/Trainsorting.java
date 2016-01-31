@@ -1,14 +1,92 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
+class Trainsorting {
+	static int[] a;
+	static int n;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = in.nextInt();
+		while(tc-- > 0) {
+			n = in.nextInt();
+			if(n == 0) {
+				out.println(0);
+				continue;
+			}
+
+			a = new int[n];
+			for(int i = 0; i < n; i++) {
+				a[i] = in.nextInt();
+			}
+
+			int max = 0;
+
+			int[] mb = new int[n];
+			int[] md = new int[n];
+			for(int i = n-1; i >= 0; i--) {
+				mb[i] = 1;
+				md[i] = 1;
+				for(int j = i+1; j < n; j++) {
+					if(a[i] < a[j]) {
+						mb[i] = Math.max(mb[i], mb[j] + 1);
+					}
+				}
+
+				for(int j = i+1; j < n; j++) {
+					if(a[i] > a[j]) {
+						md[i] = Math.max(md[i], md[j] + 1);
+					}
+				}
+
+				max = Math.max(max, mb[i] + md[i] - 1);
+			}
+
+			out.println(max);
+		}
 		
 		out.flush();
 		out.close();
+	}
+
+	static int lis(int[] a) {
+		List<Integer> temp = new ArrayList<Integer>();
+		temp.add(a[0]);
+		int len = 1;
+
+		for(int i = 1; i < a.length; i++) {
+			int v = temp.get(temp.size()-1);
+			if(v < a[i]) {
+				temp.add(v);
+				len++;
+			} else if(a[i] < temp.get(0)) {
+				temp.set(0, v);
+				len++;
+			} else if(v != a[i]) {
+				int indx = ceilIndex(temp, v);
+				temp.set(indx, v);
+			}
+		}
+
+		return len;
+	}
+
+	static int ceilIndex(List<Integer> lst, int v) {
+		int l = 0, h = lst.size() - 1;
+		while(l < h) {
+			int m = l + (h-l)/2;
+			int lv = lst.get(m);
+
+			if(lv == v) {
+				return m;
+			} else if(lv < v){
+				l = m+1;
+			} else {
+				h = m;
+			}
+		}
+
+		return h;
 	}
 
 	static int log(int x, int base) {

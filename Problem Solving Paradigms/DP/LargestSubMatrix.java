@@ -1,11 +1,67 @@
 import java.io.*;
 import java.util.*;
 
-class Main {
-	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
+class LargestSubMatrix {
+	public static void main(String[] args) throws IOException{
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		OutputWriter out = new OutputWriter(System.out);
-		
+		int tc = Integer.parseInt(in.readLine().trim());
+		String line = null;
+		while(tc-- > 0) {
+			line = in.readLine();
+			if(line == null)
+				break;
+			int[][] a = new int[26][26];
+			int col = 0;
+			while(true) {
+				if(line == null || !line.equals(""))
+					break;
+				line = in.readLine();
+			}
+
+			int r = 0;
+			do {
+				for(int i = 0, len = line.length(); i < len; i++) {
+					col = len;
+					a[r][i] = line.charAt(i) - '0';
+					if(i > 0)
+						a[r][i] += a[r][i-1];
+				}
+				r++;
+				line = in.readLine();
+			}while(line != null && !line.equals(""));
+
+				//System.out.println("Size is " + r);
+				int mx = 0;
+				int mxArea = 0;
+				for(int i = 0; i < col; i++) {
+					for(int j = i; j < col; j++) {
+						int sum = 0;
+						int prev = 0;
+						for(int k = 0; k < r; k++) {
+							if(sum < 0){
+								sum = 0;
+								prev = k;
+							}
+
+							sum += a[k][j] - (i > 0 ? a[k][i-1] : 0);
+							int area = (j-i + 1) * (k - prev + 1);
+							if(sum == area && sum > mx) {
+								mx = sum;
+								mxArea = area;
+								//System.out.println(String.format("(%d, %d) (%d, %d) = %d", prev, i, k, j, area));
+							} else if(sum != area){
+								sum = -1;
+							}
+						}
+					}
+				}
+
+				out.println(mxArea);
+				if(tc > 0) {
+					out.println();
+				}
+		}
 		
 		out.flush();
 		out.close();
