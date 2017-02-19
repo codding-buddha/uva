@@ -1,21 +1,57 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class Perfection {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		out.println("PERFECTION OUTPUT");
+		while(true) {
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			if(n == 0)
+				break;
+
+			int[] divisors = findAllDivisors(n);
+			long s = sum(divisors);
+			out.print(String.format("%5d  ", n));
+			if(s == n) {
+				out.println("PERFECT");
+			} else if( s < n) {
+				out.println("DEFICIENT");
+			} else {
+				out.println("ABUNDANT");
+			}
 		}
-		
-		out.flush()
-;		out.close();
+		out.println("END OF OUTPUT");
+		out.flush();
+		out.close();
+	}
+
+	static long sum(int[] a) {
+		long s = 0;
+		for(int i = 0; i < a.length; i++) {
+			s += a[i];
+		}
+		return s;
+	}
+
+	static int[] findAllDivisors(int n) {
+		if(n == 1)
+			return new int[] {0};
+		HashSet<Integer> d = new HashSet<Integer>();
+		d.add(1);
+		for(int i = 2, len = (int)Math.sqrt(n); i <= len; i++) {
+			if(n%i == 0) {
+				d.add(i);
+				d.add(n/i);
+			}
+		}
+		int[] result = new int[d.size()];
+		int indx = 0;
+		for(Integer entry: d) {
+			result[indx++] = entry;
+		}
+		return result;
 	}
 
 	static int log(int x, int base) {

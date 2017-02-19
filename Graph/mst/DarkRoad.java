@@ -1,21 +1,123 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class DarkRoad {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		while(true) {
+			int m = in.nextInt();
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			if(m == 0 || n == 0)
+				break;
+			List<Edge> graph =new ArrayList();
+			int total = 0;
+			for(int i = 0; i < n; i++) {
+				int v1 = in.nextInt();
+				int v2 = in.nextInt();
+				int w = in.nextInt();
+
+				graph.add(new Edge(v1, v2, w));
+				total += w;
+			}
+			
+			Collections.sort(graph, new Comparator<Edge>() {
+				@Override
+				public int compare(Edge e1, Edge e2) {
+					return e1.w - e2.w;
+				}
+			});
+
+			UnionFind uf = new UnionFind(m);
+			int selected = 0;
+			int mincost = 0;
+			for(int i = 0; i < n && selected < m-1; i++) {
+				Edge e = graph.get(i);
+				if(uf.find(e.a) != uf.find(e.b)) {
+					uf.merge(e.a, e.b);
+					mincost += e.w;
+					selected++;
+				}
+			}
+
+			// int maxcost = 0;
+			// uf = new UnionFind(m);
+			// selected = 0;
+			// Collections.sort(graph, new Comparator<Edge>() {
+			// 	@Override
+			// 	public int compare(Edge e1, Edge e2) {
+			// 		return e2.w - e1.w;
+			// 	}
+			// });
+
+			// for(int i = 0; i < n && selected < m-1; i++) {
+			// 	Edge e = graph.get(i);
+			// 	if(uf.find(e.a) != uf.find(e.b)) {
+			// 		uf.merge(e.a, e.b);
+			// 		maxcost += e.w;
+			// 		selected++;
+			// 	}
+			// }
+			// out.println("Max Cost " + maxcost);
+
+			out.println(total - mincost);
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static class Edge {
+		public int a;
+		public int b;
+		public int w;
+		public Edge(int a, int b, int w) {
+			this.a = a;
+			this.b = b;
+			this.w = w;
+		}
+
+		public Edge() {
+
+		}
+
+	}
+
+	static class UnionFind {
+		private int[] _parent;
+		private int[] _weight;
+		public UnionFind(int n) {
+			_parent = new int[n];
+			_weight = new int[n];
+			for(int i = 0; i < n; i++) {
+				_parent[i] = i;
+				_weight[i] = 0;
+			}
+		}
+
+		public int find(int x)  {
+			if(_parent[x] != x) {
+				_parent[x] = find(_parent[x]);
+			}
+			return _parent[x];
+		}
+
+		public void merge(int x, int y) {
+			int px = find(x),
+				py = find(y);
+
+				if(px == py)
+					return;
+				if(_weight[px] >= _weight[py]) {
+					_parent[py] = px;
+				} else {
+					_parent[px] = py;
+				}
+
+				if(_weight[px] == _weight[py]) {
+					_weight[px] += 1;
+				}
+		}
 	}
 
 	static int log(int x, int base) {

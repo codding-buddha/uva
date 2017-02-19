@@ -1,21 +1,83 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
-	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
+class WetLands {
+	static int[][] g;
+	static int n;
+	static int m;
+	static int[] dc = new int[] {-1, -1, 0, 1, 1, 1, 0, -1};
+	static int[] dr = new int[] {0, -1, -1, -1, 0, 1, 1, 1};
+	static int cc = 0;
+	static HashMap<Integer, Integer> l;
+	public static void main(String[] args) throws IOException {
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		int tc = Integer.parseInt(in.readLine());
+		in.readLine();
+		while(tc-- > 0) {
+			String line = null;
+			List<String> grid = new ArrayList<String>();
+			boolean endOfGrid = false;
+			l = new HashMap<Integer, Integer>();
+			cc = 0;
+			while((line = in.readLine()) != null) {
+				//end of testcase
+				if(line.equals("")){
+					out.println();
+					break;
+				}
+				char c = line.charAt(0);
+
+				if(!endOfGrid) {
+					if(c == 'W' || c == 'L'){
+						grid.add(line);
+					}
+					else {
+						endOfGrid = true;
+						n = grid.size(); m = grid.get(0).length();
+						g = new int[n][m];
+						int i = 0;
+						for(String r : grid) {
+							for(int j = 0, len = r.length(); j < len; j++){
+								g[i][j] = r.charAt(j) == 'L' ? -1 : -2;
+							}
+							i++;
+						}
+					}
+
+				}
+				
+				if(endOfGrid)  {
+					String[] p = line.split(" ");
+					int startX = Integer.parseInt(p[0]) - 1;
+					int startY = Integer.parseInt(p[1]) - 1;
+					int a = area(startX, startY);
+					if(a > 0) {
+						l.put(cc++, a);
+					} else {
+						if(g[startX][startY] != -1) {
+							a = l.get(g[startX][startY]);
+						}
+					}
+					out.println(a);
+				}
+
+			}
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static int area(int x, int y) {
+		if(x >= n || y >= m || x < 0 || y < 0 || g[x][y] != -2)
+			return 0;
+		int result = 1;
+		g[x][y] = cc;
+		for(int i = 0; i < 8; i++) {
+			result += area(x + dr[i], y + dc[i]);
+		}
+		return result;
 	}
 
 	static int log(int x, int base) {

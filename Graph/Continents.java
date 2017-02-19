@@ -1,21 +1,93 @@
+//Continents
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class Continents {
+	static int[][] map;
+	static int sx, sy;
+	static int size = 0;
+	static int[] dr = new int[] {0, -1, 0, 1};
+	static int[] dc = new int[] { -1, 0, 1, 0};
+	static int cc;
+	static int m, n;
+	static int land;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		try {
+			while(true) {
+				m = in.nextInt();
+				n = in.nextInt();
+				if(m == 0 || n == 0)
+					continue;
+				map = new int[m][n];
+				for(int i = 0; i < m; i++) {
+					String line = in.nextString();
+					for(int j = 0; j < n; j++) {
+						map[i][j] = line.charAt(j);
+					}
+				}
+
+				cc = 2;
+				sx = in.nextInt();
+				sy = in.nextInt();
+				land = map[sx][sy];
+
+				for(int i = 0; i < m; i++) {
+					for(int j = 0; j < n; j++) {
+						map[i][j] = map[i][j] == land ? 1 : 0;
+					}
+				}
+
+				fill(sx, sy);
+				cc++;
+				int max = 0;
+
+				for(int i = 0; i < m; i++) {
+					for(int j = 0; j < n; j++) {
+						if(map[i][j] == 1) {
+							int area = fill(i, j);
+							max = Math.max(area, max);
+							cc++;
+						}
+					}
+				}
+				out.println(max);
+			}
+		} catch(InputMismatchException e) {
+
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static boolean isValidPosition(int i , int j) {
+		if(i < 0 || i >= m || j < 0 || j >= n)
+			return false;
+
+		return true;
+	}
+
+	static int fill(int x, int y) {
+		if(!isValidPosition(x, y) || map[x][y] != 1)
+			return 0;
+
+		int r = 1;
+		map[x][y] = cc;
+		for(int i = 0;  i < dr.length; i++) {
+			int nx = x + dr[i];
+			int ny = y + dc[i];
+			if(i == 0 && ny == -1)
+				ny = n-1;
+
+			if(i == 2 && ny == n)
+				ny = 0;
+
+			r+= fill(nx, ny);
+		}
+
+		return r;
 	}
 
 	static int log(int x, int base) {

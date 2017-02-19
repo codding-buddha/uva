@@ -1,22 +1,141 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class TransportationSystem {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		int cs = 1;
+		while(tc-- > 0) {
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			int r = in.nextInt();
+			UnionFind uf = new UnionFind(n);
+			Point[] cities = new Point[n];
+
+			for(int i = 0; i < n; i++)
+				cities[i] = new Point(in.nextInt(), in.nextInt());
+
+			Edge[] edges = new Edge[((n)*(n-1))/2];
+			int index = 0;
+			for(int i = 0; i < n; i++) {
+				for(int j = i+1; j < n; j++) {
+					if(i == j)
+						continue;
+					edges[index++] = new Edge(i, j, cities[i].distance(cities[j]));
+				}
+			}
+
+			Arrays.sort(edges, new Comparator<Edge>() {
+				@Override
+				public int compare(Edge e1, Edge e2) {
+					double df = e1.w - e2.w;
+					return  df < 0 ? -1 : (df > 0 ? 1 : 0);
+				}
+			});
+
+			int stateCount = 1;
+			double roadLength = 0;
+			double railLength = 0;
+			int edgeCount = 0;
+			index = 0;
+			while(edgeCount != n-1) {
+				Edge e = edges[index++];
+				if(uf.find(e.v1) == uf.find(e.v2))
+					continue;
+
+				edgeCount++;
+				uf.merge(e.v1, e.v2);
+
+				double w = e.w;
+				if(w <= r) {
+					roadLength += w;
+				} else {
+					stateCount++;
+					railLength += w;
+				}
+			}
+
+
+			out.println(String.format("Case #%d: %d %d %d", cs++, stateCount, (int)(roadLength+0.5), (int)(railLength+0.5)));
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
+
+	static class Edge {
+		int v1;
+		int v2;
+		double w;
+
+		public Edge() {
+
+		}
+
+		public Edge(int v1, int v2, double w) {
+			this.v1 = v1;
+			this.v2 = v2;
+			this.w = w;
+		}
+	}
+
+	static class UnionFind {
+		int[] _parent;
+		int[] _rank;
+
+		public UnionFind(int size) {
+			_parent = new int[size];
+			_rank = new int[size];
+			for (int i = 0; i < size; i++) {
+				_parent[i] = i;
+			}
+		}
+
+
+		public void merge(int x, int y) {
+			int px = find(x);
+			int py = find(y);
+
+			if(px == py)
+				return;
+			else if(_rank[px] >= _rank[py])
+				_parent[y] = px;
+			else
+				_parent[x] = py;
+
+			if(_rank[px] == _rank[py])
+				_rank[px] += 1;
+
+		}
+
+		public int find(int x) {
+			if(_parent[x] != x)
+				_parent[x] = find(_parent[x]);
+
+			return _parent[x];
+		}
+	}
+
+	static class Point {
+		public int x;
+		public int y;
+
+		public Point() {
+
+		}
+
+		public Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public double distance(Point p) {
+			return Math.sqrt(Math.pow(p.x - this.x, 2) + Math.pow(p.y - this.y, 2));
+		}
+
+	}
+
 
 	static int log(int x, int base) {
 		return (int)(Math.log(x)/Math.log(base));

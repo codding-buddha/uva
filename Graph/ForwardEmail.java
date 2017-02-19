@@ -1,21 +1,56 @@
+//ForwardEmail
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class ForwardEmail {
+	static int n;
+	static int[] visited;
+	static int[] size;
+	static int[][] graph;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		for(int t = 1; t <= tc; t++) {
+			n = in.nextInt();
+			visited = new int[n+1];
+			size = new int[n+1];
+			graph = new int[n+1][1];
+
+			for(int i = 0; i < n; i++) {
+				graph[in.nextInt()][0] = in.nextInt();
+				size[i+1] = -1;
+			}
+
+			int maxSize = -1, maxNode = 0;
+
+			for(int i = 1; i <= n; i++) {
+				if(size[i] == -1) {
+					dfs(i);
+				}
+				if(size[i] > maxSize) {
+					maxNode = i;
+					maxSize = size[i];
+				}
+			}
+
+			out.println(String.format("Case %d: %d", t, maxNode));
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static int dfs(int i) {
+		visited[i] = 1;
+		int total = 0;
+		int v = graph[i][0];
+		if(v != 0 && visited[v] == 0)
+			total += 1 + dfs(v);
+
+		visited[i] = 0;
+		size[i] = total;
+		return size[i];
 	}
 
 	static int log(int x, int base) {

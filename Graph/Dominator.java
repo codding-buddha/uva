@@ -1,21 +1,88 @@
+//Dominator
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class Dominator {
+	static int n;
+	static int[][] graph;
+	static boolean[][] dominator;
+	static boolean[] visited;
+	static int deleted;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		for(int t = 1; t <= tc; t++) {
+			n = in.nextInt();
+			graph = new int[n][n];
+			dominator = new boolean[n][n];
+			for(int i = 0; i < n; i++) {
+				for(int j = 0; j < n; j++) {
+					graph[i][j] = in.nextInt();
+				}
+			}
+
+			
+
+			boolean[] unreachable = new boolean[n];
+			visited = new boolean[n];
+			deleted = n;
+			dfs(0);
+			for(int i = 0; i < n; i++) {
+				unreachable[i] = !visited[i];
+			}
+
+			for(int i = 0; i < n; i++) {
+				if(!unreachable[i])
+					dominator[i][i] = true;
+			}
+
+			for(int i = 0; i < n; i++) {
+				if(!unreachable[i]) {
+					visited = new boolean[n];
+					deleted = i;
+					dfs(0);
+					for(int k = 0; k < n; k++) {
+						if(!visited[k] && !unreachable[k]) {
+							dominator[i][k] = true;
+						}
+					}	
+				}				
+			}
+
+			String line = "+";
+			for(int i = 0; i < 2*n - 1; i++)
+				line += "-";
+			line += "+";
+
+			out.println(String.format("Case %d:", t));
+
+			for(int i = 0; i < n; i++) {
+				out.println(line);
+				for(int j = 0; j < n; j++) {
+					out.print(String.format("|%s", dominator[i][j] ? "Y" : "N"));
+				}
+				out.println("|");
+			}
+			out.println(line);
 		}
+
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static void dfs(int indx) {
+
+		if(indx == deleted)
+			return;
+
+		visited[indx] = true;
+		for(int i = 0; i < n; i++) {
+			if(indx == i || graph[indx][i] == 0 || visited[i] || deleted == i)
+				continue;
+			dfs(i);
+		}
 	}
 
 	static int log(int x, int base) {

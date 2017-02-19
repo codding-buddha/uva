@@ -1,21 +1,84 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class PlaceTheGuards {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		while(tc-- > 0) {
+			int v = in.nextInt();
+			int e = in.nextInt();
+			HashSet<Integer>[] graph = (HashSet<Integer>[])new HashSet[v];
+			int[] colors = new int[v];
+
+			for(int i = 0; i < v; i++) {
+				colors[i] = Integer.MAX_VALUE;
+				graph[i] = new HashSet<Integer>();
+			}
+
+			for(int i = 0; i < e; i++) {
+				int si = in.nextInt();
+				int ei = in.nextInt();
+				graph[si].add(ei);
+				graph[ei].add(si);
+			}
+
+			int guardCount = 0;
+			boolean possible = true;
+
+			for(int i = 0; i < v; i++) {
+				if(colors[i] == Integer.MAX_VALUE) {
+					Queue<Integer> q = new LinkedList<Integer>();
+					List<Integer> components = new ArrayList<Integer>();
+					q.add(i);
+					colors[i] = 1;
+					components.add(i);
+					while(q.size() > 0) {
+						int node = q.remove();
+
+						for(Integer j : graph[node]) {
+							if(colors[j] == Integer.MAX_VALUE) {
+								colors[j] = 1 - colors[node];
+								components.add(j);
+								q.add(j);
+							} else if(colors[j] == colors[node]) {
+									possible = false;
+									break;
+							}
+						}
+
+						if(!possible)
+							break;
+					}
+
+
+
+					if(!possible)
+						break;
+
+					int c1 = 0;
+					int c2 = 0;
+
+					for(Integer c : components) {
+						c1+= colors[c] == 1 ? 1 : 0;
+						c2+= colors[c] == 0 ? 1 : 0;
+					}
+
+					if(c1 == 0 || c2 == 0){
+						guardCount++;
+					} else {
+						guardCount += Math.min(c1, c2);	
+					}
+				}
+
+			}
+
+			out.println(possible ? guardCount : -1);
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

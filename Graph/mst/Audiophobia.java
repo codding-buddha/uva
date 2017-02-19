@@ -1,21 +1,115 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class Audiophobia {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		int cs = 1;
+		while (true){
+			int c = in.nextInt();
+			int s = in.nextInt();
+			int q = in.nextInt();
+			if(c == 0 && s == 0 && q == 0)
+				break;
+
+			List<Edge> e = new ArrayList<Edge>();
+
+			for (int i = 0; i < s; i++) {
+				e.add(new Edge(in.nextInt() - 1, in.nextInt() - 1, in.nextInt()));
+			}
+			
+			Collections.sort(e, new Comparator<Edge>() {
+				@Override
+				public int compare(Edge e1, Edge e2) {
+					return e1.w - e2.w;
+				}
+			});
+
+			if(cs > 1)
+				out.println();
+
+			out.println(String.format("Case #%d", cs++));
+			for(int i = 0; i < q; i++) {
+				UnionFind uf = new UnionFind(c);
+				int selected = 0;
+				int c1 = in.nextInt() - 1;
+				int c2 = in.nextInt() - 1;
+				int max = 0;
+				for (int j = 0; j < s && selected < c; j++) {
+					Edge ed = e.get(j);
+					if(uf.merge(ed.v1, ed.v2)) {
+						selected++;
+						max = ed.w;
+						if(uf.find(c1) == uf.find(c2)) 
+							break;
+					}
+				}
+
+				if(uf.find(c1) == uf.find(c2)) {
+					out.println(max);
+				} else {
+					out.println("no path");
+				}
+			}
+
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static class Edge {
+		public int v1;
+		public int v2;
+		public int w;
+
+		public Edge(int v1, int v2, int w) {
+			this.v1 = v1;
+			this.v2 = v2;
+			this.w = w;
+		}
+	}
+
+	static class UnionFind {
+		int[] _parent;
+		int[] _rank;
+
+		public UnionFind(int n) {
+			_parent = new int[n];
+			_rank = new int[n];
+			for(int i = 0 ; i < n; i++) {
+				_parent[i] = i;
+				_rank[i] = 0;
+			}
+		}
+
+		public int find(int x) {
+			if(_parent[x] != x) {
+				_parent[x] = find(_parent[x]);
+			}
+
+			return _parent[x];
+		}
+
+		public boolean merge(int x, int y) {
+			int px = find(x), py = find(y);
+
+			if(px == py)
+				return false;
+
+			if(_rank[px] >= _rank[py]) {
+				_parent[py] = px;
+			} else {
+				_parent[px] = py;
+			}
+
+			if(_rank[px] == _rank[py]) {
+				_rank[px] += 1;
+			}
+
+			return true;
+		}
 	}
 
 	static int log(int x, int base) {

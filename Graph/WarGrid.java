@@ -1,23 +1,135 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class WarGrid {
+	static int[] rd = new int[] {1, 1, -1, -1};
+	static int[] cd = new int[] {1, -1, 1, -1};
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+
+		for(int t = 1; t <= tc; t++) {
+			int r = in.nextInt(), c = in.nextInt(), m = in.nextInt(), n = in.nextInt();
+			int w = in.nextInt();
+			int[][] grid = new int[r][c];
+			while(w-- > 0) {
+				int i = in.nextInt(), j = in.nextInt();
+				grid[i][j] = -1;
+			}
+
+			int oddCount = 0; 
+			int evenCount = 0;
+			Queue<Pair> q = new LinkedList<Pair>();
+			HashSet<Pair> set = new HashSet<Pair>();
+
+			Pair fp = new Pair();
+			q.add(fp);
+			set.add(fp);	
+			
+			while(q.size() > 0) {
+				HashSet<Pair> used = new HashSet<Pair>();
+				Pair p = q.remove();
+				set.remove(p);
+				int i = p.i;
+				int j = p.j;
+				int len = 4;
+				for(int k = 0; k < len; k++) {
+					int rm = i + n*rd[k];
+					int cm = j + m*cd[k];
+					if(rm >= 0 && rm < r && cm >= 0 && cm < c && grid[rm][cm] != -1) {
+						Pair pr = new Pair(rm, cm);
+						if(used.contains(pr))
+							continue;
+
+						used.add(pr);
+						grid[i][j]++;
+						if(grid[rm][cm] == 0){
+							if(set.add(pr))
+								q.add(pr);
+						}
+					}
+				}
+
+				for(int k = 0; k < len; k++) {
+					int rm = i + m*rd[k];
+					int cm = j + n*cd[k];
+					if(rm >= 0 && rm < r && cm >= 0 && cm < c && grid[rm][cm] != -1) {
+						Pair pr = new Pair(rm, cm);
+						//already considered this cell
+						if(used.contains(pr))
+							continue;
+
+						used.add(pr);
+						grid[i][j]++;
+						if(grid[rm][cm] == 0) {
+							if(set.add(pr))
+								q.add(pr);
+						}
+					}
+				}
+
+				if(grid[i][j] == 0)
+					continue;
+
+				if(grid[i][j] % 2 == 0)
+					evenCount++;
+				else
+					oddCount++;
+			}
+
+			if(evenCount == 0 && oddCount == 0)
+				evenCount++;
+
+			out.println(String.format("Case %d: %d %d", t, evenCount, oddCount));
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
+	static class Pair{
+		public int i;
+		public int j;
+
+		public Pair(int v1, int v2) {
+			i = v1; j = v2;
+		}
+
+		public Pair() {
+			i = 0; j = 0;
+		}
+		
+	   @Override
+	    public String toString() {
+	        return "(" + i + ", " + j + ")";
+	    }
+
+	    @Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + i;
+			result = prime * result + j;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Pair other = (Pair) obj;
+			if (i != other.i)
+				return false;
+			if (j != other.j)
+				return false;
+			return true;
+		}
+	}
 	static int log(int x, int base) {
 		return (int)(Math.log(x)/Math.log(base));
 	}

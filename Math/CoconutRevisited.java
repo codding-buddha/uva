@@ -1,21 +1,41 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class CoconutRevisited {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		while(true) {
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			if(n < 0)
+				break;
+
+			int result = 0;
+			boolean found = false;
+			for(int i = (int)Math.sqrt(n)+1; i >= 2; i--) {
+				result = n;
+				if(n%i == 1 && ((n-1)/i % i) == i-1) {
+					int j;
+					for(j = 1; j <= i; j++) {
+						if(result%i != 1)
+							break;
+						result = result - result/i - 1;
+					}
+
+					if(j == i+1 && result%i == 0) {
+						result  = i;
+						found = true;
+						break;
+					}
+				}
+			}
+
+			String output = !found ? " no solution" : String.format(" %d people and 1 monkey", result);
+			out.println(String.format("%d coconuts,", n) + output);
 		}
-		
-		out.flush()
-;		out.close();
+
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

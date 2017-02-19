@@ -1,21 +1,31 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class ConsecutiveIntegers {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		while(true) {
+			long s = in.nextLong();
+
+			if(s < 0)
+				break;
+			long rc = 0;
+			for(long count = (long)Math.sqrt(2*s); count >= 1; count--) {
+				long num = 2*s + count - count*count;
+				if(num % (2*count) == 0){
+					rc = count;
+					break;
+				}
+			}
+			long a = rc == 0 ? s : (2*s + rc - rc*rc)/(2*rc);
+			long b = rc == 0 ? s : (a + rc-1);
+
+			out.println(String.format("%d = %d + ... + %d", s, a, b));
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

@@ -1,22 +1,49 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class DigitCounting {
+	// static int[][] count;
+	static int[] count;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+		// count = new int[21][10];
+		// for(int i = 2; i <= 20; i++)
+		// 	fill(i);
+
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		for(int i = 0; i < tc; i++) {
+			int v = in.nextInt();
+			count = new int[10];
+			fill(v);
+			for(int j = 0; j < 10; j++) {
+				out.print((j > 0 ? " " : "") + count[j]);
+			}
+			out.println();
 		}
-		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
+
+	static void fill(int n) {
+		for(int i = 1; i <= n; i++) {
+			setDigits(i);
+		}
+	}
+	
+	static void setDigits(int n) {
+		while(n > 0) {
+			count[n%10]++;
+			n = n/10;
+		}
+	}
+
+	// static void setDigits(int indx, int n) {
+	// 	while(n > 0) {
+	// 		count[indx][n%10]++;
+	// 		n = n/10;
+	// 	}
+	// }
 
 	static int log(int x, int base) {
 		return (int)(Math.log(x)/Math.log(base));

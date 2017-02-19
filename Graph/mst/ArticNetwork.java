@@ -1,21 +1,123 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class ArticNetwork {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
+
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		while(tc-- > 0) {
+			int c = in.nextInt() - 1;
+			int t = in.nextInt();
+			Point[] points = new Point[t];
+			for(int  i = 0; i < t; i++) {
+				points[i] = new Point(in.nextInt(), in.nextInt());
+			}
+
+			List<Edge> edges = new ArrayList<Edge>();
+
+			for(int i = 0; i < t; i++) {
+				for(int j = i+1; j < t; j++) {
+					edges.add(new Edge(i, j, points[i].distance(points[j])));
+				}
+			}
+
+			Collections.sort(edges, new Comparator<Edge>() {
+				@Override
+				public int compare(Edge e1, Edge e2) {
+					return e1.w < e2.w ? -1 : (e1.w > e2.w ? 1 : 0);
+				}
+			});
+
+			UnionFind uf = new UnionFind(t);
+
+			double max = 0.0;
+			for(int i = 0, len = edges.size(); i < len && c < t-1; i++) {
+				Edge e = edges.get(i);
+				if(uf.merge(e.x, e.y)) {
+					max = e.w;
+					c++;
+				}
+			}
+
+			out.println(String.format("%.2f", c == t-1  ? max :  0.0));
+
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static class UnionFind {
+
+		private int[] _parent;
+		private int[] _rank;
+
+		public UnionFind(int n) {
+			_parent = new int[n];
+			_rank = new int[n];
+
+			for(int i = 0; i < n; i++) {
+				_parent[i] = i;
+				_rank[i] = 0;
+			}
+		}
+
+		public boolean merge(int x, int y) {
+			int px = find(x), py = find(y);
+			if(px == py)
+				return false;
+
+			if(_rank[px] >= _rank[py]) {
+				_parent[px] = py;
+			} else {
+				_parent[py] = px;
+			}
+
+			if(_rank[px] == _rank[py])
+				_rank[px] += 1;
+
+			return true;
+		}
+
+		public int find(int x) {
+			if(_parent[x] != x) {
+				_parent[x] = find(_parent[x]);
+			}
+
+			return _parent[x];
+		}
+
+	}
+
+	static class Point {
+		public int x;
+		public int y;
+
+		public Point(int x, int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public double distance(Point p)  {
+			if(p == null)
+				return 0;
+
+			return Math.sqrt(Math.pow(this.x - p.x, 2) + Math.pow(this.y - p.y, 2));
+		}
+	}
+
+	static class Edge {
+		public int x;
+		public int y;
+		public double w;
+
+		public Edge(int x, int y, double w) {
+			this.x = x;
+			this.y = y;
+			this.w = w;
+		}
 	}
 
 	static int log(int x, int base) {

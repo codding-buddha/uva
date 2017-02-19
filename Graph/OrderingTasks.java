@@ -1,21 +1,59 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class OrderingTasks {
+	static HashSet<Integer>[] graph;
+	static boolean[] visited;
+	static Deque<Integer> order;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		while(true) {
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			int m = in.nextInt();
+			if(n == 0)
+				break;
+
+			graph = (HashSet<Integer>[])new HashSet[n+1];
+			visited = new boolean[n+1];
+			for(int i = 1; i <= n; i++){
+				graph[i] = new HashSet<Integer>();
+			}
+
+			for(int i = 1; i <= m; i++) {
+				int a = in.nextInt(), b = in.nextInt();
+				graph[a].add(b);
+			}
+
+			order = new LinkedList<Integer>();
+
+			for(int i = 1; i <= n; i++) {
+				if(!visited[i]){
+					visited[i] = true;
+					dfs(i);
+				}
+			}
+
+			while(order.size() > 0){
+				String suffix = order.size() > 1 ? " " : "";
+				out.print(order.removeFirst() + suffix);
+			}
+			out.println();
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static void dfs(int v) {
+		for(Integer node : graph[v]) {
+			if(!visited[node]){
+				visited[node] = true;
+				dfs(node);
+			}
+		}
+
+		order.addFirst(v);
 	}
 
 	static int log(int x, int base) {

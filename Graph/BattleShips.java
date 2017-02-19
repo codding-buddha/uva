@@ -1,21 +1,73 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class BattleShips {
+	static int[][] grid;
+	static int cc;
+	static int n;
+	static int[] dr = new int[] {0, -1, 0, 1};
+	static int[] dc = new int[] { -1, 0, 1, 0};
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
 		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		for(int t = 1; t <= tc; t++) {
+			n = in.nextInt();
+			grid = new int[n][n];
+			for(int i = 0; i < n; i++) {
+				String line = in.nextString();
+				for(int j = 0; j < n; j++) {
+					grid[i][j] = line.charAt(j) == '.' ? 0 : line.charAt(j) == '@' ? 2 : 1;
+				}
+			}
+
+			// printGrid();
+
+			int count = 0;
+			cc = 3;
+			for(int i = 0; i < n; i++) {
+				for(int j = 0; j < n; j++) {
+					if(grid[i][j] == 1) {
+						count++;
+						sink(i, j);
+						// printGrid();
+						cc++;
+					}
+				}
+			}
+
+			out.println(String.format("Case %d: %d", t, count));
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static boolean isValidPosition(int x, int y) {
+		if(x < 0 || x >= n || y < 0 || y >= n)
+			return false;
+		return true;
+	}
+
+	static void printGrid() {
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < n; j++)
+				System.out.print(String.format("%2d ", grid[i][j]));
+			System.out.println();				
+		}
+		System.out.println("\n\n");
+	}
+
+	static void sink(int x, int y) {
+		if(!isValidPosition(x, y) || grid[x][y] == 0)
+			return;
+
+		if(grid[x][y] != 1 && grid[x][y] != 2)
+			return;
+
+		grid[x][y] = cc;
+		for(int i = 0; i < dr.length; i++)
+			sink(x + dr[i], y + dc[i]);
 	}
 
 	static int log(int x, int base) {

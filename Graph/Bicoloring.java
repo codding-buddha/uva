@@ -1,21 +1,54 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class Bicoloring {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		while(true) {
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			if(n == 0)
+				break;
+			int m = in.nextInt();
+			List<Integer>[] graph = (ArrayList<Integer>[])new ArrayList[n];
+			int[] color = new int[n];
+			for(int i = 0; i < n; i++){
+				graph[i] = new ArrayList<Integer>();
+				color[i] = Integer.MAX_VALUE;
+			}
+
+
+			while(m-- > 0) {
+				int i = in.nextInt(), j = in.nextInt();
+				graph[i].add(j);
+				graph[j].add(i);
+			}
+
+			color[0] = 0;
+			Queue<Integer> q = new LinkedList<Integer>();
+			q.add(0);
+			boolean biparite = true;
+			while(q.size() > 0) {
+				int node = q.remove();
+				int c = color[node];
+				for(int i = 0, len = graph[node].size(); i < len; i++) {
+					if(color[graph[node].get(i)] == Integer.MAX_VALUE) {
+						color[graph[node].get(i)] = 1 - c;
+						q.add(graph[node].get(i));
+					}else if(color[graph[node].get(i)] == c) {
+						biparite = false;
+						break;
+					}
+				}
+				if(!biparite)
+					break;
+			}
+
+			out.println(biparite ? "BICOLORABLE." : "NOT BICOLORABLE.");
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

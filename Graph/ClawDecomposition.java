@@ -1,21 +1,55 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class ClawDecomposition {
+	static List<Integer>[] graph;
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		while(true) {
+			int v = in.nextInt();
+
+			if(v == 0)
+				break;
+
+			int[] color = new int[v];
+			graph = (ArrayList<Integer>[])new ArrayList[v];
+			for(int i = 0; i < v; i++) {
+				graph[i] = new ArrayList();
+				color[i] = -1;
+			}
+			while(true) {
+				int a = in.nextInt() - 1, b = in.nextInt() - 1;
+				if(a == -1 && b == -1)
+					break;
+				graph[a].add(b);
+				graph[b].add(a);
+			}
+
+			Queue<Integer> q = new LinkedList<Integer>();
+			boolean possible = true;
+			q.add(0);
+			color[0] = 0;
+			while(q.size() > 0) {
+				int node = q.remove();
+				int pcolor = color[node];
+				for(int i = 0; i < graph[node].size(); i++) {
+					int n = graph[node].get(i);
+					if(color[n] == pcolor){
+						possible = false;
+						break;
+					} else if(color[n] == -1) {
+						color[n] = 1 - pcolor;
+						q.add(n);
+					}
+				}
+			}
+
+			out.println(possible ? "YES" : "NO");
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

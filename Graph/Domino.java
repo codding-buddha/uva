@@ -1,21 +1,111 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class Domino {
+	static int[][] dis;
+	static int[] visited;
+	static long MAX = Long.MAX_VALUE;
+
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		int tc = 1;
+		while(true){
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			int m = in.nextInt();
+			if(n == 0 && m == 0)
+				break;
+
+			out.println(String.format("System #%d", tc++));
+			if(n == 0) {
+				for(int i = 0; i < m; i++) {
+					in.nextInt(); in.nextInt(); in.nextInt();
+				}
+
+				out.println(String.format("The last domino falls after %.1f seconds, at key domino %d.", -1.0F, -1));
+			}
+
+			dis = new int[n+1][n+1];
+			for(int i = 0; i <= n; i++){
+				for(int j = 0; j <= n; j++) {
+					dis[i][j] = -1;
+				}
+			}
+			
+			visited = new int[n+1];
+			for(int i = 0; i < m; i++) {
+				int s = in.nextInt();
+				int e = in.nextInt();
+				int w = in.nextInt();
+				dis[s][e] = w;
+				dis[e][s] = w;
+			}
+
+			long[] l = new long[n+1];
+
+			for(int i = 2; i <= n; i++)
+				l[i] = MAX;
+
+		   while (true) {
+		      int a = -1;
+		      long min = MAX;
+
+		      for (int i = 1; i <= n; i++) {
+		        if (visited[i] == 0 && l[i] < min) {
+		          min = l[i];
+		          a = i;
+		        }
+		      }
+
+		      if (a == -1) {
+		        break;
+		      }
+
+		      visited[a] = 1;
+		      for (int i = 1; i <= n; i++) {
+		      	if(i == a || dis[a][i] == -1)
+		      		continue;
+
+		        if (l[i] > l[a] + dis[a][i]) {
+		          l[i] = l[a] + dis[a][i];
+		        }
+		      }
+		    }
+
+			double time = 0.0F;
+			int left = 1 , right = -1;
+			for (int i = 1; i <= n; i++) {
+				if(l[i] != MAX && time < l[i]) {
+					time = l[i];
+					left = i;
+				}
+			}
+
+			for(int i = 1; i <=n; i++) {
+				for(int j = 1; j <=n; j++) {
+					if(i == j || dis[i][j] == -1)
+						continue;
+
+					long t1 = l[i], t2 = l[j];
+					double t = Math.max(t1, t2) + (dis[i][j] - Math.abs(t1 - t2))/2.0;
+					if(t1 != MAX && t2 != MAX && t > time) {
+						time = t;
+						left = i < j ? i : j;
+						right = i > j ? i : j;
+					}
+				}
+			}
+
+			if(right == -1)
+				out.println(String.format("The last domino falls after %.1f seconds, at key domino %d.", time, left));
+			else
+				out.println(String.format("The last domino falls after %.1f seconds, between key dominoes %d and %d.", time, left, right));
+
+			out.println();
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

@@ -1,21 +1,212 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
-	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
-		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+class SameGame {
+	static int[][] g;
+	static int[] dc = new int[] {-1, 0, 1, 0};
+	static int[] dr = new int[] {0, -1, 0, 1};
+	static int n;
+	static int m = 15;
+	static int sx = -1;
+	static int sy = -1;
+	static long points = 0;
+	static int cc = 0;
+	static int maxArea = -1;
+	static HashMap<Integer, Integer> cl;
+	static BufferedReader in;
+	static OutputWriter out;
+	public static void main(String[] args) throws Exception{
+		in = new BufferedReader(new InputStreamReader(System.in));
+		out = new OutputWriter(System.out);
+		int tc = Integer.parseInt(in.readLine().trim());
+		in.readLine();
+		for(int t = 1; t <= tc; t++) {
+			
+			if(t > 1)
+				out.println();
+			
+			out.println(String.format("Game %d:", t));
+			out.println();
+
+			cl = new HashMap<Integer, Integer>();
+			String line = null;
+			boolean endOfGrid = false;
+			List<String> rows = new ArrayList<String>();
+			while(true) {
+				line = in.readLine();
+				line = line != null ? line.trim() : line;
+				//end of testcase
+				if(line == null || line.equals("")) {
+					endOfGrid = true;
+				}
+
+				if(endOfGrid) {
+					n = rows.size();
+					g = new int[n][m];
+					for(int i = n-1, k = 0; i >= 0; i--, k++) {
+						String r = rows.get(k);
+						for(int j = 0; j < m; j++) {
+							g[i][j] = r.charAt(j) == 'R' ? -1 :  r.charAt(j) == 'G' ? -2  : -3;
+						}
+					}
+
+					//till game ends
+					int move = 1;
+					points = 0;
+					sx = -1; sy = -1;
+					while(true) {
+						cluster();
+						if(sx == -1 || sy == -1) {
+							int rb = remaingingBalls();
+							points += rb == 0 ? 1000 : 0; 
+							out.println(String.format("Final score: %d, with %d balls remaining.", points, rb));
+							break;
+						}
+
+						remove(move++);
+					}
+					
+					break;
+
+				} else {
+					rows.add(line);
+				}
+			}
 		}
 		
-		out.flush()
-;		out.close();
+		
+		out.flush();
+		out.close();
+	}
+
+	static void cluster() {
+		cc = 0;
+		int max = 0;
+		int mcc = 0;
+		for(int j = 0; j < m; j++) {
+			for(int i = 0; i < n; i++) {
+				if(g[i][j] >= 0 || g[i][j] == Integer.MIN_VALUE){
+					continue;
+				}
+				else {
+					int color = g[i][j];
+					int area = mark(i, j, color);
+					cl.put(cc, color);
+					cc++;
+					if(area >= 2 && area > max) {
+						max = area;
+						sx = i;
+						sy = j;
+						maxArea = max;
+						mcc = cc-1;
+					}
+				}
+			}
+		}
+
+		if(max == 0) {
+			sx = -1; sy = -1;
+		}
+	}
+
+	static void remove(int mc) throws Exception{
+		if(sx == -1 || sy == -1)
+			return;
+		long p = (maxArea-2)*(maxArea-2);
+		points += p;
+		out.println(String.format("Move %d at (%d,%d): removed %d balls of color %c, got %d points.",
+									mc, sx+1, sy+1, maxArea, color(sx, sy), p));
+		remove(sx, sy, g[sx][sy]);
+		//shift down
+		for(int j = 0; j < m; j++) {
+			int k = 0;
+			for(int i = 0; i < n; i++) {
+				if(g[i][j] != Integer.MIN_VALUE) {
+					//reset color
+					g[i][j] = cl.containsKey(g[i][j]) ? cl.get(g[i][j]) : g[i][j];
+					g[k++][j] = g[i][j];
+				}
+			}
+			while(k < n)
+				g[k++][j] = Integer.MIN_VALUE;
+		}
+
+		//shift left
+		int k = 0;
+		for(int j = 0, i = 0; j < m; j++) {
+			for(i = 0; i < n; i++) {
+				if(g[i][j] != Integer.MIN_VALUE)
+					break;
+			}
+			
+			if(i != 10) {
+				for(i = 0; i < n; i++)
+					g[i][k] = g[i][j];
+				k++;
+			}
+		}
+		
+		while(k < m) {
+			for(int i = 0; i < n; i++)
+				g[i][k] = Integer.MIN_VALUE;
+			k++;
+		}
+
+		cl.clear();
+	}
+
+	static boolean isEmptyCol(int col) {
+		for(int i = 0; i < n; i++) {
+			if(g[i][col] != Integer.MIN_VALUE)
+				return false;
+		}
+
+		return true;
+	}
+
+	static void remove(int i, int j, int c) {
+		if(i >= n || i < 0 || j >= m || j < 0 || g[i][j] != c)
+			return;
+		g[i][j] = Integer.MIN_VALUE;
+		for(int k = 0; k < 4; k++) {
+			remove(dr[k] + i, dc[k] + j, c);
+		}
+	}
+
+	static int mark(int i, int j, int c) {
+		if(i >= n || i < 0 || j >= m || j < 0 || g[i][j] != c)
+			return 0;
+		int m = 1;
+
+		g[i][j] = cc;
+		for(int k = 0; k < 4; k++) {
+			m += mark(dr[k] + i, dc[k] + j, c);
+		}
+
+		return m;
+	}
+
+	static char color(int x, int y) throws Exception{
+		int c = g[x][y] < 0 ? g[x][y] : cl.get(g[x][y]);
+		switch(c) {
+			case -1: return 'R';
+			case -2:  return 'G';
+			case -3: return 'B';
+		}
+
+		throw new Exception("invlaid color " + c);
+	}
+
+	static int remaingingBalls() {
+		int b = 0;
+		for(int i = 0; i < n; i++) {
+			for(int j = 0; j < m; j++) {
+				if(g[i][j] != Integer.MIN_VALUE)
+					b++;
+			}
+		}
+
+		return b;
 	}
 
 	static int log(int x, int base) {

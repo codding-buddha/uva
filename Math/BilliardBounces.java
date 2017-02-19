@@ -1,21 +1,22 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class BilliardBounces {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		while(true) {
+			int a = in.nextInt(), b = in.nextInt(), v = in.nextInt(), A = in.nextInt(), s = in.nextInt();
+			if(a == 0 && b == 0 && v == 0 && s == 0 && A == 0)
+				break;
+			int hc = (int)((b + v*s*(Math.sin(Math.toRadians(A))))/(2*b));
+			int vc = (int)((a + v*s*(Math.cos(Math.toRadians(A))))/(2*a));
+
+			out.println(vc +  " " + hc);
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

@@ -1,21 +1,101 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
-	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
+class Network {
+	static List<Integer>[] graph;
+	static int n;
+	static boolean[] articulationPoint;
+	static int dfsCount = 0;
+	static int[] dfsL;
+	static int[] dfsN;
+	static boolean[] visited;
+	static int[] parent;
+	static int dfsRoot;
+	static int rootChildren;
+	public static void main(String[] args) throws IOException {
+		// InputReader in = new InputReader(System.in);
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		while(true) {
+			n = Integer.parseInt(br.readLine().trim());
+
+			if(n == 0)
+				break;
+
+			graph = (ArrayList<Integer>[])new ArrayList[n+1];
+
+			for(int i = 1; i <= n; i++)
+				graph[i] = new ArrayList<Integer>();
+
+			String line = null;
+			articulationPoint = new boolean[n+1];
+			visited = new boolean[n+1];
+			parent = new int[n+1];
+			dfsN = new int[n+1];
+			dfsL = new int[n+1];
+
+			while(!(line = br.readLine().trim()).equals("0")) {
+				String[] num = line.split(" ");
+				int[] nodes = new int[num.length];
+
+				for(int i = 0; i < nodes.length; i++)
+					nodes[i] = Integer.parseInt(num[i]);
+
+				for(int j = 1, i = 0; j < nodes.length; j++) {
+					graph[nodes[i]].add(nodes[j]);
+					graph[nodes[j]].add(nodes[i]);
+				}
+			}
+
+			for(int i = 1; i <= n; i++) {
+				dfsRoot = i;
+				rootChildren = 0;
+				if(!visited[i]) {
+					findArticulation(i);
+					articulationPoint[i] = rootChildren > 1 ? articulationPoint[i] : false;
+				}
+			}
+
+			int count = 0;
+			for(int i = 1; i <= n; i++) {
+				count += articulationPoint[i] ? 1 : 0;
+			}
+
+			out.println(count);
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static void findArticulation(int u) {
+		if(visited[u])
+			return;
+
+		visited[u] = true;
+		dfsL[u] = dfsCount++;
+		dfsN[u] = dfsL[u];
+
+		for(int i = 0; i < graph[u].size(); i++) {
+			int v = graph[u].get(i);
+
+			if(!visited[v]) {
+				parent[v] = u;
+
+				if(u == dfsRoot)
+					rootChildren++;
+
+				findArticulation(v);
+
+				if(dfsL[v] >= dfsN[u])
+					articulationPoint[u] = true;
+
+				dfsL[u] = Math.min(dfsL[v], dfsL[u]);
+
+			} else if(parent[u] != v){
+				dfsL[u] = Math.min(dfsL[u], dfsN[v]);
+			}
+		}
 	}
 
 	static int log(int x, int base) {

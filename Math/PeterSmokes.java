@@ -1,21 +1,37 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class PeterSmokes {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		try {
+			while(true) {
+				int n = in.nextInt();
+				int k = in.nextInt();
+
+				int cleft = n;
+				long smoked = 0;
+				while(cleft > 0) {
+					if(cleft < k) {
+						smoked += cleft;
+						cleft = cleft/k;
+					} else {
+						int r = cleft/k;
+						smoked += r*k;
+						cleft = r + cleft%k;
+					}
+				}
+
+				out.println(smoked);
+			}
+
+		}catch(InputMismatchException ex) {
+
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

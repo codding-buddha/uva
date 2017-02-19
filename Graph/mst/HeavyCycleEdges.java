@@ -1,21 +1,112 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class HeavyCycleEdges {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
+		while(true) {
 			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+			int e = in.nextInt();
+
+			if(n == 0 || e == 0) {
+				break;
+			}
+
+			List<Edge> g = new ArrayList<Edge>();
+			for(int i = 0; i < e; i++) {
+				g.add(new Edge(in.nextInt(), in.nextInt(), in.nextInt()));
+			}
+
+			Collections.sort(g, new Comparator<Edge>() {
+				@Override
+				public int compare(Edge e1, Edge e2) {
+					return e1.w - e2.w;
+				}
+			});
+
+			UnionFind uf = new UnionFind(n);
+			List<Integer> r = new ArrayList<Integer>();
+			for(int i = 0; i < e; i++) {
+				Edge ed = g.get(i);
+				if(uf.find(ed.a) == uf.find(ed.b)) {
+					r.add(ed.w);
+					continue;
+				}
+				
+				uf.merge(ed.a, ed.b);
+			}
+
+			if(r.size() > 0) {
+				for (int i = 0; i <r.size() ; i++) {
+					out.print(i > 0 ? " " + r.get(i) : r.get(i));
+				}
+
+			} else {
+				out.print("forest");
+			}
+			out.println();
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static class UnionFind {
+
+		private int[] _parent;
+		private int[] _rank;
+
+		public UnionFind(int n) {
+			_parent = new int[n];
+			_rank = new int[n];
+			for(int i = 0; i < n; i++) {
+				_parent[i] = i;
+				_rank[i] = 0;
+			}
+		}
+
+		public int find(int x) {
+			if(_parent[x] != x) {
+				_parent[x] = find(_parent[x]);
+			}
+
+			return _parent[x];
+		}
+
+		public void merge(int x, int y) {
+			int px = find(x),
+			py = find(y);
+
+			if(px == py)
+				return;
+			if(_rank[px] >= _rank[py]) {
+				_parent[py] = px;
+			} else {
+				_parent[px] = py;
+			}
+
+			if(_rank[px] == _rank[py])
+				_rank[px] += 1;
+
+		}
+	}
+
+	static class Edge {
+		public int a;
+		public int b;
+		public int w;
+
+		public Edge(int a, int b, int w) {
+			this.a = a;
+			this.b = b; 
+			this.w = w;
+		}
+
+		public Edge() {
+
+		}
+
 	}
 
 	static int log(int x, int base) {

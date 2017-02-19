@@ -1,21 +1,70 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class Beverages {
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		int tc = 1;
+		try {
+			while(true) {
+				int n = in.nextInt();
+				HashMap<String, Integer> lookup = new HashMap<String, Integer>();
+				int[][] graph = new int[n+1][n];
+				String[] beverages = new String[n];
+				for(int i = 0; i < n; i++) {
+					String b = in.nextString();
+					lookup.put(b, i);
+					beverages[i] = b;
+				}
+
+				int m = in.nextInt();
+				while(m-- > 0) {
+					String s = in.nextString();
+					String e = in.nextString();
+					int si = lookup.get(s), ei = lookup.get(e);
+					if(graph[si][ei] == 0){
+						graph[si][ei] = 1;
+						graph[n][ei] += 1;
+					}
+				}
+
+				PriorityQueue<Integer> q = new PriorityQueue<Integer>();
+				for(int i = 0; i < n; i++) {
+					if(graph[n][i] == 0){
+						q.add(i);
+					}
+				}
+				List<Integer> lst = new ArrayList<Integer>();
+				while(q.size() > 0) {
+					int node = q.remove();
+					lst.add(node);
+					for(int i = 0; i < n; i++) {
+						if(graph[node][i] == 1) {
+							graph[node][i] = 0;
+							graph[n][i] -= 1;
+							if(graph[n][i] == 0){
+								q.add(i);
+							}
+						}
+					}
+				}
+
+				String result = String.format("Case #%d: Dilbert should drink beverages in this order:", tc++);
+				for(Integer l : lst) {
+					result += " " + beverages[l];
+				}
+
+				result += ".";
+				out.println(result);
+				out.println();
+			}
+		}catch(InputMismatchException e) {
+
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

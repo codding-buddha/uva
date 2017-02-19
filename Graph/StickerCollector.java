@@ -1,21 +1,88 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
+class StickerCollector {
+	static int[][] arena;
+	//row direction North, east, south, west
+	static int[] r = new int[] {-1, 0, 1, 0};
+	//col direction North, east, south, west
+	static int[] c = new int[] {0, 1, 0, -1};
 	public static void main(String[] args) {
 		InputReader in = new InputReader(System.in);
 		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+		while(true) {
+			int n = in.nextInt(), m = in.nextInt(), s = in.nextInt();
+			if(n == 0 && m == 0 && s == 0)
+				break;
+			arena = new int[n+2][m+2];
+			int cr = -1;
+			int cc = -1;
+			int cd = -1;
+
+			for(int i = 1; i <= n; i++) {
+				String line = in.nextString();
+				for(int j = 1; j <= m; j++) {
+					char cell = line.charAt(j-1);
+					switch(cell) {
+						case '*':
+							arena[i][j] = 1;
+						break;
+						case '.':
+							arena[i][j] = 0;
+						break;
+						case '#':
+							arena[i][j] = -1;
+						break;
+						case 'N':
+							cd = 0;
+							cr=i; cc =j;
+						break;
+						case 'S':
+							cd = 2;
+							cr=i; cc =j;
+						break;
+						case 'L':
+							cd = 1;
+							cr=i; cc =j;
+						break;
+						case 'O':
+							cd = 3;
+							cr=i; cc = j;
+						break;
+					}
+				}
+			}
+
+			String instructions = in.nextString();
+			int collections = 0;
+			for(int i = 0; i < s; i++) {
+				char mv = instructions.charAt(i);
+				switch(mv) {
+					case 'F':
+						int nr = cr + r[cd];
+						int nc = cc + c[cd];
+						if(nr >= 1 && nr <= n && nc >= 1 && nc <= m && arena[nr][nc] != -1) {
+							collections += arena[nr][nc];
+							arena[nr][nc] = 0;
+							cr = nr; cc = nc;
+						}
+					break;
+					case 'D':
+						cd = (cd+1)%4;
+					break;
+					case 'E':
+						cd = cd-1;
+						if(cd < 0)
+							cd+= 4;
+					break;
+				}
+			}
+
+			out.println(collections);
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
 	}
 
 	static int log(int x, int base) {

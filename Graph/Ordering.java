@@ -1,21 +1,80 @@
 import java.io.*;
 import java.util.*;
 
-class BrickGame {
-	public static void main(String[] args) {
-		InputReader in = new InputReader(System.in);
-		OutputWriter out = new OutputWriter(System.out);
-		int tc = in.nextInt();
-		for(int i = 1; i <= tc; i++) {
-			int n = in.nextInt();
-			int[] a = new int[n];
-			for(int j = 0; j < n; j++)
-				a[j] = in.nextInt();
-			out.println(String.format("Case %d: %d", i, a[a.length/2]));
+class Ordering {
+	static HashMap<Character, List<Character>> graph;
+	static char[] elements;
+	static int n;
+	static OutputWriter out;
+	static HashSet<Character> visited;
+	public static void main(String[] args) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		out = new OutputWriter(System.out);
+		int tc = Integer.parseInt(br.readLine().trim());
+		while(tc-- > 0) {
+			br.readLine();
+			String[] nodes = br.readLine().trim().split(" ");
+			n = nodes.length;
+			elements = new char[n];
+			for(int i = 0; i < n; i++)
+				elements[i] = nodes[i].charAt(0);
+
+			Arrays.sort(elements);
+			visited = new HashSet<Character>();
+			graph = new HashMap<Character, List<Character>>();
+			for(int i = 0; i < elements.length; i++) {
+				graph.put(elements[i], new ArrayList<Character>());
+			}
+
+			String[] constraints = br.readLine().split(" ");
+
+			for(int i = 0; i < constraints.length; i++) {
+				graph.get(constraints[i].charAt(0)).add(constraints[i].charAt(2));
+			}
+
+			if(!dfs("")) {
+				out.println("NO");
+			}
+			
+			if(tc > 0)
+				out.println();
 		}
 		
-		out.flush()
-;		out.close();
+		out.flush();
+		out.close();
+	}
+
+	static boolean dfs(String path) {
+		if(path.length() == elements.length) {
+			out.print(path.charAt(0));
+			for(int i = 1, len = path.length(); i < len; i++)
+				out.print(" " + path.charAt(i));
+			out.println();
+			return true;
+		}
+
+		boolean result = false;
+		for(int i = 0; i < n; i++) {
+			if(!visited.contains(elements[i])) {
+				if(isValid(elements[i])) {
+					visited.add(elements[i]);
+					result = dfs(path+elements[i]) | result;
+					visited.remove(elements[i]);
+				}
+			}
+		}
+
+		return result;
+	}
+
+	static boolean isValid(char e) {
+		List<Character> adj = graph.get(e);
+		for(Character c: adj) {
+			if(visited.contains(c))
+				return false;
+		}
+
+		return true;
 	}
 
 	static int log(int x, int base) {
